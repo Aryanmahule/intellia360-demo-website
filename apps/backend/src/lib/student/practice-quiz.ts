@@ -48,6 +48,9 @@ export interface PublicQuizQuestion {
   id: string;
   question: string;
   options: PublicQuizOption[];
+  /** The bank's own hint for this question. Never the answer. */
+  hint?: string;
+  difficulty?: "easy" | "medium" | "hard" | null;
 }
 
 export interface PublicQuiz {
@@ -57,6 +60,18 @@ export interface PublicQuiz {
   lessonTitle: string;
   durationSeconds: number;
   questions: PublicQuizQuestion[];
+}
+
+/** XP for a completed practice quiz, scaled by score. */
+export const PRACTICE_MAX_XP = 50;
+
+export function xpForScore(scorePercent: number): number {
+  return Math.round((Math.min(100, Math.max(0, scorePercent)) / 100) * PRACTICE_MAX_XP);
+}
+
+/** The exact question ids a practice quiz serves — what a session pins. */
+export function questionIdsForQuiz(quizId: string, grade: string): string[] {
+  return questionsFor(quizId, grade).map((q) => q.id);
 }
 
 /* ── Question selection ──────────────────────────────────────────────────── */
@@ -123,7 +138,7 @@ export function quizIdForLesson(lessonId: string): string {
   return `${PREFIX}${lessonId}`;
 }
 
-function lessonIdFromQuizId(quizId: string): string | null {
+export function lessonIdFromQuizId(quizId: string): string | null {
   if (!quizId.startsWith(PREFIX)) return null;
   const rest = quizId.slice(PREFIX.length);
   return rest && rest !== "1" ? rest : null;
@@ -186,6 +201,7 @@ export function buildQuiz(quizId: string, grade: string): PublicQuiz | null {
       id: q.id,
       question: q.questionText,
       options: q.options.map((o) => ({ id: o.id, text: o.text })),
+      hint: q.hint || undefined,
     })),
   };
 }

@@ -158,3 +158,44 @@ export async function sendPasswordResetEmail(
     throw new Error(error.message || "Failed to send password reset email via Resend");
   }
 }
+
+// ─── Billing ──────────────────────────────────────────────────────────────────
+
+const escapeHtml = (s: string) =>
+  s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
+
+/**
+ * A short billing notice (payment received, payment failed) with one button
+ * that opens a page of the frontend. `lines` are plain text.
+ */
+export async function sendBillingEmail(
+  to: string,
+  name: string,
+  notice: { subject: string; heading: string; lines: string[]; ctaLabel: string; ctaPath: string }
+): Promise<void> {
+  const url = `${baseUrl()}${notice.ctaPath}`;
+  const paragraphs = notice.lines
+    .map((line) => `<p style="margin:0 0 12px;color:${MUTED};font-size:15px;line-height:1.6;">${escapeHtml(line)}</p>`)
+    .join("");
+
+  const body = `
+    <h2 style="margin:0 0 8px;font-size:22px;color:${DARK};">${escapeHtml(notice.heading)}</h2>
+    <p style="margin:0 0 12px;color:${MUTED};font-size:15px;line-height:1.6;">Hi <strong>${escapeHtml(name)}</strong>,</p>
+    ${paragraphs}
+    <a href="${url}"
+       style="display:inline-block;margin-top:8px;padding:14px 32px;
+              background:linear-gradient(135deg,${ORANGE},#ea580c);
+              color:#fff;border-radius:12px;text-decoration:none;
+              font-size:15px;font-weight:700;">
+      ${escapeHtml(notice.ctaLabel)}
+    </a>`;
+
+  const resend = getResend();
+  const { error } = await resend.emails.send({
+    from: from(),
+    to,
+    subject: notice.subject,
+    html: emailLayout(`${notice.subject} — Intellia360`, body),
+  });
+  if (error) throw new Error(error.message || "Failed to send billing email via Resend");
+}

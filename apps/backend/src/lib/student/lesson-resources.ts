@@ -2,9 +2,11 @@
  * lesson-resources.ts
  *
  * Resolves what the student lesson screen shows for one lesson in one grade:
- * the Architecture (interactive lesson) URL, the lesson videos and the EduNotes
- * document. Practice is not resolved here — it stays in the lesson data for the
- * screens that already use it.
+ * the Architecture (interactive lesson) URL, the lesson videos, the EduNotes
+ * document and the lesson test (src/lib/lesson-test). Practice links are not
+ * resolved here — they stay in the lesson data for the screens that already
+ * use them. The test is on whenever it fits the lesson's topic; a lesson file
+ * with `"test": { "enabled": false }` turns it off.
  *
  * Sources, highest precedence first:
  *   1. The lesson's `modules` block — what the Editor saves
@@ -43,6 +45,8 @@ import {
   isPlaceholderVideoId,
   parseYouTubeId,
 } from "@/lib/student/lesson-videos";
+import { summarizeLessonTest } from "@/lib/lesson-test/lesson-test";
+import type { LessonTopic } from "@/lib/lesson-test/topics";
 
 interface CurriculumTopic {
   id?: string;
@@ -54,7 +58,7 @@ interface CurriculumTopic {
 
 interface CurriculumDocument {
   standaloneTopics?: CurriculumTopic[] | null;
-  chapters?: { topics?: CurriculumTopic[] | null }[] | null;
+  chapters?: { title?: string; topics?: CurriculumTopic[] | null }[] | null;
 }
 
 interface MatchedLesson {
@@ -101,6 +105,21 @@ function findTopic(curriculum: CurriculumDocument | null, lessonId: string): Cur
   ];
 
   return topics.find((topic) => topic?.id === lessonId || topic?.lessonId === lessonId) ?? null;
+}
+
+/** The chapter holding the lesson — by id, or by title for lesson files with their own id. */
+function findChapter(curriculum: CurriculumDocument | null, ids: string[], title: string | null) {
+  const wanted = normalizeTitle(title);
+  return (
+    (curriculum?.chapters ?? []).find((chapter) =>
+      (chapter?.topics ?? []).some(
+        (topic) =>
+          ids.includes(topic?.id ?? "") ||
+          ids.includes(topic?.lessonId ?? "") ||
+          (wanted !== "" && normalizeTitle(topic?.title) === wanted)
+      )
+    ) ?? null
+  );
 }
 
 function normalizeTitle(value: unknown): string {
@@ -201,15 +220,18 @@ function eduNotesFromUrl(value: unknown, fileName: string, origin: string | null
   return external ? { fileName, fileId: null, url: external } : null;
 }
 
-/**
- * Resolves the lesson modules for `lessonId` in `gradeParam`.
- * Throws UnsafePathError when the grade id is not a valid grade.
- */
-export async function resolveLessonResources(
-  lessonId: string,
-  gradeParam: string,
-  origin: string | null
-): Promise<ResolvedLessonResources> {
+interface LoadedLesson {
+  grade: string;
+  curriculum: CurriculumDocument | null;
+  topic: CurriculumTopic | null;
+  lesson: MatchedLesson | null;
+  content: LessonContent | null;
+  ids: string[];
+  title: string | null;
+}
+
+/** Throws UnsafePathError when the grade id is not a valid grade. */
+async function loadLesson(lessonId: string, gradeParam: string): Promise<LoadedLesson> {
   const grade = assertGradeId(gradeParam);
 
   const curriculum = await readCurriculum(grade);
@@ -220,9 +242,54 @@ export async function resolveLessonResources(
   const content = lesson?.content ?? null;
   if (lesson && !ids.includes(lesson.lessonId)) ids.push(lesson.lessonId);
 
-  const cards = topic?.actionCards ?? {};
   const title =
     topic?.title ?? (typeof content?.title === "string" ? content.title : null);
+
+  return { grade, curriculum, topic, lesson, content, ids, title };
+}
+
+/** What the lesson test is written about, or null when the lesson has no test. */
+function lessonTestTopic(loaded: LoadedLesson): LessonTopic | null {
+  const { grade, curriculum, topic, lesson, content, ids, title } = loaded;
+  if (!title || !(topic || lesson)) return null;
+  // Not tied to the practice module: lessons created in the editor start with
+  // practice off (it needs a link), which would have left them without a test.
+  const testSetting = content?.test;
+  if (testSetting && typeof testSetting === "object" && (testSetting as { enabled?: unknown }).enabled === false) return null;
+
+  const chapter = findChapter(curriculum, ids, title);
+  return {
+    grade,
+    title,
+    chapterTitle:
+      chapter?.title ?? (typeof content?.chapterTitle === "string" ? content.chapterTitle : null),
+    siblingTitles: (chapter?.topics ?? [])
+      .map((t) => t?.title)
+      .filter((t): t is string => typeof t === "string" && normalizeTitle(t) !== normalizeTitle(title)),
+  };
+}
+
+/**
+ * The topic `lessonId`'s test is written for, or null when it has none.
+ * Throws UnsafePathError when the grade id is not a valid grade.
+ */
+export async function resolveLessonTestTopic(lessonId: string, gradeParam: string): Promise<LessonTopic | null> {
+  return lessonTestTopic(await loadLesson(lessonId, gradeParam));
+}
+
+/**
+ * Resolves the lesson modules for `lessonId` in `gradeParam`.
+ * Throws UnsafePathError when the grade id is not a valid grade.
+ */
+export async function resolveLessonResources(
+  lessonId: string,
+  gradeParam: string,
+  origin: string | null
+): Promise<ResolvedLessonResources> {
+  const loaded = await loadLesson(lessonId, gradeParam);
+  const { grade, topic, lesson, content, ids, title } = loaded;
+
+  const cards = topic?.actionCards ?? {};
 
   /* ── Architecture ─────────────────────────────────────────────────────── */
   const architecture = editorModule(content, "architectureModule");
@@ -267,6 +334,10 @@ export async function resolveLessonResources(
           ? { fileName: registryNote.fileName, fileId: registryNote.fileId, url: null }
           : null);
 
+  /* ── Test ─────────────────────────────────────────────────────────────── */
+  const testTopic = lessonTestTopic(loaded);
+  const test = testTopic ? summarizeLessonTest(lessonId, testTopic) : null;
+
   return {
     lessonId,
     grade,
@@ -275,5 +346,6 @@ export async function resolveLessonResources(
     architectureUrl,
     video,
     eduNotes,
+    test,
   };
 }
