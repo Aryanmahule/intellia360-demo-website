@@ -7,6 +7,7 @@ import type {
   BillingMode,
   BillingProduct,
   MembershipTier,
+  PlanConfig,
   PlanTier,
   TierLimits,
 } from "../../billing/plans";
@@ -35,10 +36,14 @@ export interface CatalogPrice {
 
 /** GET /api/billing/catalog */
 export interface BillingCatalog {
+  /** Sales are open (an administrator's switch). */
   billingEnabled: boolean;
-  country: string;
-  /** Currency the prices below are in; null when the country cannot be served. */
+  /** The country the buyer chose; null until they choose one (no prices then). */
+  country: string | null;
+  /** Currency the prices below are in; null when no country is chosen or it cannot be served. */
   currency: string | null;
+  /** The plans on sale, in display order, as administrators configured them. */
+  plans: PlanConfig[];
   allowedCurrencies: string[];
   /** Every currency the price book has prices in. */
   pricedCurrencies: string[];
@@ -54,6 +59,11 @@ export interface BillingCatalog {
 /** What one learner can use right now. GET /api/student/membership */
 export interface MembershipAccess {
   billingEnabled: boolean;
+  /**
+   * May use the student portal: has a membership (trial, paid or given by an
+   * administrator), is an administrator, or sales are closed.
+   */
+  hasMembership: boolean;
   tier: MembershipTier;
   intelliaPlay: boolean;
   limits: TierLimits;
@@ -185,7 +195,18 @@ export interface AdminPriceBook {
   familyDiscountPercent: number;
   trialDays: number;
   gatewayConfigured: boolean;
+  /** Sales are open right now. */
   billingEnabled: boolean;
+  /** The administrators' switch: true/false, or null when never set (follows the server default). */
+  salesSwitch: boolean | null;
+  /** BILLING_ENABLED=false on the server forces sales off, whatever the switch says. */
+  serverLocked: boolean;
+}
+
+/** GET /api/admin/billing/plans */
+export interface AdminPlanRow extends PlanConfig {
+  updatedAt: string | null;
+  updatedBy: string | null;
 }
 
 export interface AdminSubscriptionRow extends BillingSubscriptionView {

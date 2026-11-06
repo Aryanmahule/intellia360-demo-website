@@ -143,14 +143,18 @@ export function defaultCurrency(country: string, pricedCurrencies: readonly stri
   return allowedCurrencies(country, pricedCurrencies)[0] ?? null;
 }
 
-/**
- * Best guess at the visitor's country from browser locales ("en-IN" → IN).
- * Only a default for the picker; the buyer's own choice always wins.
- */
-export function guessCountryFromLocales(locales: readonly string[]): string | null {
-  for (const locale of locales) {
-    const region = locale.split(/[-_]/).slice(1).find((part) => /^[A-Za-z]{2}$/.test(part));
-    if (region && BY_CODE.has(region.toUpperCase())) return region.toUpperCase();
-  }
-  return null;
+/** Shown first in the country picker; the buyer always chooses for themselves. */
+export const POPULAR_COUNTRIES: readonly string[] = ["IN", "US", "GB", "AE", "SG", "AU", "CA"];
+
+/** Countries whose name or code matches what the buyer typed. */
+export function searchCountries(query: string): CountryInfo[] {
+  const q = query.trim().toLowerCase();
+  if (!q) return COUNTRIES;
+  return COUNTRIES.filter(
+    (c) => c.name.toLowerCase().includes(q) || c.code.toLowerCase() === q
+  ).sort((a, b) => {
+    const aStarts = a.name.toLowerCase().startsWith(q) ? 0 : 1;
+    const bStarts = b.name.toLowerCase().startsWith(q) ? 0 : 1;
+    return aStarts - bStarts || a.name.localeCompare(b.name);
+  });
 }

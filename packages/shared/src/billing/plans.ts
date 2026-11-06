@@ -1,33 +1,38 @@
 /**
- * What Intellia360 sells, what each level unlocks, and how a family price is
- * worked out. Single source of truth for the pricing page, the student
- * portal's locks and the API's checks, the same way auth/roles.ts is for roles.
+ * What Intellia360 sells and how a family price is worked out. Shared by the
+ * pricing page, the student portal's locks and the API's checks, the same way
+ * auth/roles.ts is for roles.
  *
  * Two products:
- *   • MEMBERSHIP — Free, Core, Plus, Ultra. Free needs no purchase.
+ *   • MEMBERSHIP — the levels a learner needs to use the student portal
+ *     (Plus and Ultra on sale; Core exists but is off sale). Without one, a
+ *     learner sees only the membership page once sales are open.
  *   • INTELLIAPLAY — the IntelliaPlay section of the student portal, sold on
  *     its own: it can be bought with or without a membership.
  *
- * Prices are NOT here: they live in the database price book and an
- * administrator edits them (/admin/pricing). DEFAULT_PRICE_BOOK only seeds an
- * empty price book.
+ * Administrators control the plans themselves — names, descriptions, feature
+ * lists, limits and which ones are on sale (/admin/plans) — and the prices
+ * (/admin/pricing). DEFAULT_PLANS and DEFAULT_PRICE_BOOK only seed an empty
+ * database.
  */
 
 export type BillingProduct = "MEMBERSHIP" | "INTELLIAPLAY";
+/** A learner's membership level; FREE means "no membership". */
 export type MembershipTier = "FREE" | "CORE" | "PLUS" | "ULTRA";
 export type PaidTier = Exclude<MembershipTier, "FREE">;
-/** The `tier` a price or purchase carries: a membership level, or the add-on. */
+/** The `tier` a plan, price or purchase carries: a membership level, or the add-on. */
 export type PlanTier = PaidTier | "INTELLIAPLAY";
 export type BillingInterval = "MONTHLY" | "ANNUAL";
 /** AUTO_RENEW: Razorpay subscription. PASS: one payment for one period. */
 export type BillingMode = "AUTO_RENEW" | "PASS";
 
 export const BILLING_PRODUCTS: readonly BillingProduct[] = ["MEMBERSHIP", "INTELLIAPLAY"];
-export const PAID_TIERS: readonly PaidTier[] = ["CORE", "PLUS", "ULTRA"];
+export const MEMBERSHIP_TIERS: readonly PaidTier[] = ["CORE", "PLUS", "ULTRA"];
+export const PLAN_TIERS: readonly PlanTier[] = ["CORE", "PLUS", "ULTRA", "INTELLIAPLAY"];
 export const BILLING_INTERVALS: readonly BillingInterval[] = ["MONTHLY", "ANNUAL"];
 export const BILLING_MODES: readonly BillingMode[] = ["AUTO_RENEW", "PASS"];
 
-/** Every (product, tier) pair that has a price. */
+/** Every (product, tier) pair that can have a price. */
 export const PRICED_PLANS: readonly { product: BillingProduct; tier: PlanTier }[] = [
   { product: "MEMBERSHIP", tier: "CORE" },
   { product: "MEMBERSHIP", tier: "PLUS" },
@@ -39,13 +44,17 @@ export function isValidPlan(product: string, tier: string): boolean {
   return PRICED_PLANS.some((p) => p.product === product && p.tier === tier);
 }
 
+export function productForTier(tier: PlanTier): BillingProduct {
+  return tier === "INTELLIAPLAY" ? "INTELLIAPLAY" : "MEMBERSHIP";
+}
+
 const TIER_RANK: Record<MembershipTier, number> = { FREE: 0, CORE: 1, PLUS: 2, ULTRA: 3 };
 
 export function higherTier(a: MembershipTier, b: MembershipTier): MembershipTier {
   return TIER_RANK[a] >= TIER_RANK[b] ? a : b;
 }
 
-// ─── What each level unlocks ──────────────────────────────────────────────────
+// ─── What a membership unlocks ────────────────────────────────────────────────
 
 export interface TierLimits {
   /** AI Tutor questions per UTC day; null means no daily limit. */
@@ -59,14 +68,7 @@ export interface TierLimits {
   prioritySupport: boolean;
 }
 
-export const TIER_LIMITS: Record<MembershipTier, TierLimits> = {
-  FREE:  { aiTutorPerDay: 5,   learningPath: false, gemMultiplier: 1, monthlyBonusGems: 0,   prioritySupport: false },
-  CORE:  { aiTutorPerDay: 30,  learningPath: true,  gemMultiplier: 2, monthlyBonusGems: 0,   prioritySupport: false },
-  PLUS:  { aiTutorPerDay: 75,  learningPath: true,  gemMultiplier: 3, monthlyBonusGems: 0,   prioritySupport: false },
-  ULTRA: { aiTutorPerDay: 200, learningPath: true,  gemMultiplier: 3, monthlyBonusGems: 500, prioritySupport: true },
-};
-
-/** Limits while billing is switched off: everything open, nothing boosted. */
+/** Limits while sales are switched off, and for administrators: everything open, nothing boosted. */
 export const UNRESTRICTED_LIMITS: TierLimits = {
   aiTutorPerDay: null,
   learningPath: true,
@@ -75,48 +77,68 @@ export const UNRESTRICTED_LIMITS: TierLimits = {
   prioritySupport: false,
 };
 
-export interface TierInfo {
-  tier: MembershipTier;
+/** A learner with no membership while sales are open: nothing (the portal is locked). */
+export const NO_ACCESS_LIMITS: TierLimits = {
+  aiTutorPerDay: 0,
+  learningPath: false,
+  gemMultiplier: 1,
+  monthlyBonusGems: 0,
+  prioritySupport: false,
+};
+
+/** One plan as an administrator configures it. */
+export interface PlanConfig {
+  tier: PlanTier;
+  product: BillingProduct;
   name: string;
   tagline: string;
   highlights: string[];
+  onSale: boolean;
+  /** Shown with a "Most popular" badge. */
+  featured: boolean;
+  sortOrder: number;
+  /** Membership levels only; null for IntelliaPlay. */
+  limits: TierLimits | null;
 }
 
-export const TIER_INFO: Record<MembershipTier, TierInfo> = {
-  FREE: {
-    tier: "FREE",
-    name: "Free",
-    tagline: "Every lesson and game, free for every learner.",
-    highlights: [
-      "All math lessons, notes, videos and lesson tests",
-      "Daily Quiz, Practice Quizzes, Achievements and Leaderboard",
-      "AI Tutor: 5 questions a day",
-      "Learning Path progress and topic mastery",
-    ],
-  },
-  CORE: {
+export const DEFAULT_PLANS: readonly PlanConfig[] = [
+  {
     tier: "CORE",
+    product: "MEMBERSHIP",
     name: "Core",
-    tagline: "Personalised practice that adapts to your child.",
+    tagline: "Every lesson and game, with the AI Tutor.",
     highlights: [
-      "Everything in Free",
+      "Every lesson, note, video and lesson test",
+      "Daily Quiz, Practice Quizzes, Achievements and Leaderboard",
       "AI Tutor: 30 questions a day",
       "Learning Path recommendations and Smart Practice",
       "2x gems on lessons and the Daily Quiz",
     ],
+    onSale: false,
+    featured: false,
+    sortOrder: 1,
+    limits: { aiTutorPerDay: 30, learningPath: true, gemMultiplier: 2, monthlyBonusGems: 0, prioritySupport: false },
   },
-  PLUS: {
+  {
     tier: "PLUS",
+    product: "MEMBERSHIP",
     name: "Plus",
-    tagline: "More tutor time and bigger rewards.",
+    tagline: "Everything your child needs to learn math, personalised.",
     highlights: [
-      "Everything in Core",
+      "Every lesson, note, video and lesson test",
+      "Daily Quiz, Practice Quizzes, Achievements and Leaderboard",
       "AI Tutor: 75 questions a day",
+      "Learning Path recommendations and Smart Practice",
       "3x gems on lessons and the Daily Quiz",
     ],
+    onSale: true,
+    featured: true,
+    sortOrder: 2,
+    limits: { aiTutorPerDay: 75, learningPath: true, gemMultiplier: 3, monthlyBonusGems: 0, prioritySupport: false },
   },
-  ULTRA: {
+  {
     tier: "ULTRA",
+    product: "MEMBERSHIP",
     name: "Ultra",
     tagline: "The most tutor time, bonus gems and priority help.",
     highlights: [
@@ -125,37 +147,64 @@ export const TIER_INFO: Record<MembershipTier, TierInfo> = {
       "500 bonus gems every month",
       "Priority support",
     ],
+    onSale: true,
+    featured: false,
+    sortOrder: 3,
+    limits: { aiTutorPerDay: 200, learningPath: true, gemMultiplier: 3, monthlyBonusGems: 500, prioritySupport: true },
   },
-};
+  {
+    tier: "INTELLIAPLAY",
+    product: "INTELLIAPLAY",
+    name: "IntelliaPlay",
+    tagline: "The IntelliaPlay section of the student portal, as a separate add-on.",
+    highlights: [
+      "Unlocks the IntelliaPlay section for each child you choose",
+      "Buy it on its own or together with any membership",
+      "Monthly or annual, auto-renew or pay once",
+    ],
+    onSale: true,
+    featured: false,
+    sortOrder: 4,
+    limits: null,
+  },
+];
 
-export const INTELLIAPLAY_INFO = {
-  name: "IntelliaPlay",
-  tagline: "The IntelliaPlay section of the student portal, as a separate add-on.",
-  highlights: [
-    "Unlocks the IntelliaPlay section for each child you choose",
-    "Buy it on its own or together with any membership",
-    "Monthly or annual, auto-renew or pay once",
-  ],
-};
+export function defaultPlan(tier: PlanTier): PlanConfig {
+  return DEFAULT_PLANS.find((p) => p.tier === tier)!;
+}
+
+/** The name used in receipts and Checkout: "Intellia360 Plus", "IntelliaPlay". */
+export function planDisplayName(tier: PlanTier, plans?: readonly PlanConfig[]): string {
+  const name = (plans?.find((p) => p.tier === tier) ?? defaultPlan(tier)).name;
+  if (tier === "INTELLIAPLAY" || /intellia/i.test(name)) return name;
+  return `Intellia360 ${name}`;
+}
 
 /** One row of the comparison table on the pricing page. */
 export interface ComparisonRow {
   label: string;
-  values: Record<MembershipTier, string | boolean>;
+  values: Partial<Record<PlanTier, string | boolean>>;
 }
 
-export const COMPARISON_ROWS: ComparisonRow[] = [
-  { label: "Lessons, notes, videos and lesson tests", values: { FREE: true, CORE: true, PLUS: true, ULTRA: true } },
-  { label: "Daily Quiz, Practice Quizzes, Achievements and Leaderboard", values: { FREE: true, CORE: true, PLUS: true, ULTRA: true } },
-  { label: "Assignments from teachers", values: { FREE: true, CORE: true, PLUS: true, ULTRA: true } },
-  { label: "AI Tutor questions per day", values: { FREE: "5", CORE: "30", PLUS: "75", ULTRA: "200" } },
-  { label: "Learning Path progress and topic mastery", values: { FREE: true, CORE: true, PLUS: true, ULTRA: true } },
-  { label: "Learning Path recommendations and Smart Practice", values: { FREE: false, CORE: true, PLUS: true, ULTRA: true } },
-  { label: "Gems on lessons and the Daily Quiz", values: { FREE: "1x", CORE: "2x", PLUS: "3x", ULTRA: "3x" } },
-  { label: "Bonus gems every month", values: { FREE: false, CORE: false, PLUS: false, ULTRA: "500" } },
-  { label: "Priority support", values: { FREE: false, CORE: false, PLUS: false, ULTRA: true } },
-  { label: "IntelliaPlay section", values: { FREE: "Add-on", CORE: "Add-on", PLUS: "Add-on", ULTRA: "Add-on" } },
-];
+/** The comparison table for the membership plans given, built from their limits. */
+export function comparisonRows(plans: readonly PlanConfig[]): ComparisonRow[] {
+  const memberships = plans.filter((p) => p.product === "MEMBERSHIP" && p.limits);
+  const row = (label: string, value: (l: TierLimits) => string | boolean): ComparisonRow => ({
+    label,
+    values: Object.fromEntries(memberships.map((p) => [p.tier, value(p.limits!)])),
+  });
+  return [
+    row("Every lesson, note, video and lesson test", () => true),
+    row("Daily Quiz, Practice Quizzes, Achievements and Leaderboard", () => true),
+    row("Assignments from teachers", () => true),
+    row("AI Tutor questions per day", (l) => (l.aiTutorPerDay === null ? "Unlimited" : String(l.aiTutorPerDay))),
+    row("Learning Path recommendations and Smart Practice", (l) => l.learningPath),
+    row("Gems on lessons and the Daily Quiz", (l) => `${l.gemMultiplier}x`),
+    row("Bonus gems every month", (l) => (l.monthlyBonusGems > 0 ? String(l.monthlyBonusGems) : false)),
+    row("Priority support", (l) => l.prioritySupport),
+    row("IntelliaPlay section", () => "Add-on"),
+  ];
+}
 
 // ─── Free trial ───────────────────────────────────────────────────────────────
 
@@ -216,14 +265,6 @@ export const DEFAULT_PRICE_BOOK: Record<string, Record<PlanTier, [string, string
   AUD: { CORE: ["11.99", "71.99"], PLUS: ["17.99", "107.99"], ULTRA: ["23.99", "143.99"], INTELLIAPLAY: ["7.49", "44.99"] },
   CAD: { CORE: ["10.99", "65.99"], PLUS: ["15.99", "95.99"], ULTRA: ["21.99", "131.99"], INTELLIAPLAY: ["6.99", "41.99"] },
 };
-
-export function productForTier(tier: PlanTier): BillingProduct {
-  return tier === "INTELLIAPLAY" ? "INTELLIAPLAY" : "MEMBERSHIP";
-}
-
-export function planDisplayName(tier: PlanTier): string {
-  return tier === "INTELLIAPLAY" ? INTELLIAPLAY_INFO.name : `Intellia360 ${TIER_INFO[tier].name}`;
-}
 
 export function intervalLabel(interval: BillingInterval): string {
   return interval === "MONTHLY" ? "month" : "year";
