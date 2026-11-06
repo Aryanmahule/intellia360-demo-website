@@ -10,6 +10,7 @@ interface GradeMeta { id: string; label: string; lessonCount: number; }
 interface LessonSummary {
   id: string; title: string; grade: string;
   chapterId: string; estimatedMinutes: number; locked: boolean;
+  hasFile: boolean; duplicateOf: string | null; sharesTitle: boolean;
 }
 
 function LessonsContent() {
@@ -29,17 +30,23 @@ function LessonsContent() {
   const [saving, setSaving]   = useState(false);
   const [formErr, setFormErr] = useState("");
   const [formOk, setFormOk]   = useState("");
+  const [clashId, setClashId] = useState("");
 
-  useEffect(() => {
+  const [merging, setMerging]   = useState(false);
+  const [mergeMsg, setMergeMsg] = useState<{ type: "ok" | "err"; text: string } | null>(null);
+
+  const refreshGrades = useCallback(() => {
     apiFetch("/api/editor/grades")
       .then((r) => r.json())
       .then((j) => {
         if (j.success && j.data.length > 0) {
           setGrades(j.data);
-          if (!initialGrade) setSelected(j.data[0].id);
+          setSelected((current) => current || j.data[0].id);
         }
       });
-  }, [initialGrade]);
+  }, []);
+
+  useEffect(() => { refreshGrades(); }, [refreshGrades]);
 
   const loadLessons = useCallback((gradeId: string) => {
     if (!gradeId) return;
@@ -52,15 +59,32 @@ function LessonsContent() {
 
   useEffect(() => { loadLessons(selected); }, [selected, loadLessons]);
 
+  const duplicates = lessons.filter((l) => l.duplicateOf);
+
   async function deleteLesson(lessonId: string) {
     if (!confirm(`Delete lesson "${lessonId}"?`)) return;
     const r = await apiFetch(`/api/editor/lessons/${selected}/${lessonId}`, { method: "DELETE" }).then((r) => r.json());
-    if (r.success) loadLessons(selected); else alert(r.message);
+    if (r.success) { loadLessons(selected); refreshGrades(); } else alert(r.message);
+  }
+
+  async function mergeDuplicates() {
+    const count = duplicates.length;
+    if (!confirm(`Merge ${count} duplicate lesson${count === 1 ? "" : "s"}? Each lesson stays in its original place with the newest links, and the extra copy is removed for students.`)) return;
+    setMerging(true); setMergeMsg(null);
+    try {
+      const r = await apiFetch(`/api/editor/lessons/${selected}/merge-duplicates`, { method: "POST" }).then((r) => r.json());
+      setMergeMsg({ type: r.success ? "ok" : "err", text: r.message });
+      if (r.success) { loadLessons(selected); refreshGrades(); }
+    } catch {
+      setMergeMsg({ type: "err", text: "Network error — nothing was merged." });
+    } finally {
+      setMerging(false);
+    }
   }
 
   async function createLesson(e: React.FormEvent) {
     e.preventDefault();
-    setFormErr(""); setFormOk(""); setSaving(true);
+    setFormErr(""); setFormOk(""); setClashId(""); setSaving(true);
     const r = await apiFetch(`/api/editor/lessons/${selected}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -74,7 +98,11 @@ function LessonsContent() {
       setFormOk(`Lesson "${form.id}" created!`);
       setForm({ id: "", title: "", chapterId: "chap_1", estimatedMinutes: "20", architectureUrl: "", practiceUrl: "", videoUrl: "", locked: false });
       loadLessons(selected);
-    } else setFormErr(r.message);
+      refreshGrades();
+    } else {
+      setFormErr(r.message);
+      setClashId(r.data?.id ?? "");
+    }
   }
 
   function field(key: keyof typeof form, label: string, placeholder: string, type = "text") {
@@ -107,7 +135,7 @@ function LessonsContent() {
           <button
             key={g.id}
             className={`ed-grade-tab${selected === g.id ? " active" : ""}`}
-            onClick={() => setSelected(g.id)}
+            onClick={() => { setSelected(g.id); setMergeMsg(null); }}
           >
             {g.label} <span className="ed-grade-tab-count">{g.lessonCount}</span>
           </button>
@@ -141,10 +169,29 @@ function LessonsContent() {
               </button>
             </div>
           </form>
-          {formErr && <p className="ed-error-msg">{formErr}</p>}
+          {formErr && (
+            <p className="ed-error-msg">
+              {formErr}{" "}
+              {clashId && <Link href={`/editor/lessons/${selected}/${clashId}`}>Edit that lesson →</Link>}
+            </p>
+          )}
           {formOk  && <p className="ed-success-txt">{formOk}</p>}
         </div>
       </div>
+
+      {/* Lessons added twice before duplicates were refused */}
+      {duplicates.length > 0 && (
+        <div className="ed-notice">
+          <div>
+            <strong>⚠️ {duplicates.length} duplicate lesson{duplicates.length === 1 ? "" : "s"} in {selected.replace("grade", "Grade ")}</strong>
+            Students see these twice. Merging keeps each lesson in its original place with the newest links.
+          </div>
+          <button type="button" className="ed-btn-primary" onClick={mergeDuplicates} disabled={merging}>
+            {merging ? "Merging…" : "Merge duplicates"}
+          </button>
+        </div>
+      )}
+      {mergeMsg && <p className={mergeMsg.type === "ok" ? "ed-success-txt" : "ed-error-msg"} role="status">{mergeMsg.text}</p>}
 
       {/* Lessons table */}
       <div className="ed-panel">
@@ -170,7 +217,15 @@ function LessonsContent() {
                 {lessons.map((l) => (
                   <tr key={l.id}>
                     <td><code className="ed-code">{l.id}</code></td>
-                    <td>{l.title}</td>
+                    <td>
+                      {l.title}
+                      {l.duplicateOf && <span className="ed-tag warn" title={`Repeats ${l.duplicateOf}`}>Duplicate</span>}
+                      {l.sharesTitle && (
+                        <span className="ed-tag warn" title="Several lessons have this title, so this one can't be merged automatically. Rename or delete it.">
+                          Same title
+                        </span>
+                      )}
+                    </td>
                     <td><span className="ed-tag">{l.chapterId}</span></td>
                     <td>{l.estimatedMinutes} min</td>
                     <td>
@@ -180,7 +235,8 @@ function LessonsContent() {
                     </td>
                     <td className="ed-actions-cell">
                       <Link href={`/editor/lessons/${selected}/${l.id}`} className="ed-btn-sm">✏️ Edit</Link>
-                      <button className="ed-btn-sm danger" onClick={() => deleteLesson(l.id)}>🗑</button>
+                      {/* A lesson never saved here is only in the curriculum: nothing to delete yet. */}
+                      {l.hasFile && <button className="ed-btn-sm danger" onClick={() => deleteLesson(l.id)}>🗑</button>}
                     </td>
                   </tr>
                 ))}

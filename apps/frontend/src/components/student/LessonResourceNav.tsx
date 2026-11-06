@@ -6,12 +6,13 @@ import Link from "next/link";
  * Topic-wise resource switcher shown on every lesson screen.
  *
  * Every button opens the lesson screen (/student/lesson/[id]) with the module
- * in ?module=, so Architecture, Videos and EduNotes all render inside the one
- * lesson page for the same lessonId (and grade when known). They used to open
- * separate routes.
+ * in ?module=, so Architecture, Videos, EduNotes and the Test all render
+ * inside the one lesson page for the same lessonId (and grade when known).
+ * They used to open separate routes. The Test comes last: it checks what the
+ * other three taught.
  */
 
-export type LessonResourceKey = "lesson" | "video" | "edunotes";
+export type LessonResourceKey = "lesson" | "video" | "edunotes" | "test";
 
 interface LessonResourceNavProps {
   lessonId?: string | null;
@@ -57,6 +58,12 @@ export default function LessonResourceNav({
       icon: "📘",
       label: "EduNotes",
       href: moduleHref("edunotes"),
+    },
+    {
+      key: "test",
+      icon: "📝",
+      label: "Test",
+      href: moduleHref("test"),
     },
   ];
 

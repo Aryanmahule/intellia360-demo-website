@@ -26,7 +26,7 @@ interface Story {
     xp: number;
     duration: string;
     difficulty: "Beginner" | "Intermediate" | "Advanced";
-    icon: string;
+    
     coverGradient: string;
     badgeColor: string;
     puzzlesCount: number;
@@ -46,7 +46,6 @@ const storiesData: Story[] = [
         xp: 150,
         duration: "12 mins",
         difficulty: "Intermediate",
-        icon: "🚀",
         coverGradient: "linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%)",
         badgeColor: "#3b82f6",
         puzzlesCount: 5,
@@ -64,7 +63,6 @@ const storiesData: Story[] = [
         xp: 200,
         duration: "18 mins",
         difficulty: "Intermediate",
-        icon: "🔍",
         coverGradient: "linear-gradient(135deg, #4c1d95 0%, #8b5cf6 100%)",
         badgeColor: "#8b5cf6",
         puzzlesCount: 7,
@@ -82,7 +80,6 @@ const storiesData: Story[] = [
         xp: 180,
         duration: "15 mins",
         difficulty: "Intermediate",
-        icon: "🏰",
         coverGradient: "linear-gradient(135deg, #065f46 0%, #10b981 100%)",
         badgeColor: "#10b981",
         puzzlesCount: 6,
@@ -100,7 +97,6 @@ const storiesData: Story[] = [
         xp: 160,
         duration: "14 mins",
         difficulty: "Intermediate",
-        icon: "⏳",
         coverGradient: "linear-gradient(135deg, #78350f 0%, #f59e0b 100%)",
         badgeColor: "#f59e0b",
         puzzlesCount: 5,
@@ -118,7 +114,6 @@ const storiesData: Story[] = [
         xp: 100,
         duration: "8 mins",
         difficulty: "Beginner",
-        icon: "🦁",
         coverGradient: "linear-gradient(135deg, #9a3412 0%, #ea580c 100%)",
         badgeColor: "#ea580c",
         puzzlesCount: 4,
@@ -136,7 +131,6 @@ const storiesData: Story[] = [
         xp: 220,
         duration: "20 mins",
         difficulty: "Advanced",
-        icon: "🏺",
         coverGradient: "linear-gradient(135deg, #831843 0%, #db2777 100%)",
         badgeColor: "#db2777",
         puzzlesCount: 8,
@@ -154,7 +148,6 @@ const storiesData: Story[] = [
         xp: 175,
         duration: "15 mins",
         difficulty: "Intermediate",
-        icon: "🌲",
         coverGradient: "linear-gradient(135deg, #14532d 0%, #22c55e 100%)",
         badgeColor: "#22c55e",
         puzzlesCount: 6,
@@ -172,7 +165,6 @@ const storiesData: Story[] = [
         xp: 300,
         duration: "25 mins",
         difficulty: "Advanced",
-        icon: "🎲",
         coverGradient: "linear-gradient(135deg, #312e81 0%, #6366f1 100%)",
         badgeColor: "#6366f1",
         puzzlesCount: 9,
@@ -190,7 +182,6 @@ const storiesData: Story[] = [
         xp: 190,
         duration: "16 mins",
         difficulty: "Intermediate",
-        icon: "🗺️",
         coverGradient: "linear-gradient(135deg, #0e7490 0%, #06b6d4 100%)",
         badgeColor: "#06b6d4",
         puzzlesCount: 6,
@@ -205,14 +196,6 @@ const gradeCategories = [
     { id: "senior", label: "Senior Masters (G9 - G12)" },
 ];
 
-const genreFilters = [
-    { id: "all", label: "All Genres" },
-    { id: "space", label: "🚀 Space" },
-    { id: "mystery", label: "🔍 Mystery" },
-    { id: "fantasy", label: "🏰 Fantasy" },
-    { id: "time", label: "⏳ Time Travel" },
-    { id: "nature", label: "🦁 Nature" },
-];
 
 /* ============================================================
    MAIN COMPONENT
@@ -265,7 +248,7 @@ export default function ThinkTalesPage() {
                     {/* HERO CONTENT */}
                     <div className="thinktales-hero-content">
                         <span className="thinktales-eyebrow">
-                            📖 IMMERSIVE STORY-DRIVEN MATHEMATICS
+                             IMMERSIVE STORY-DRIVEN MATHEMATICS
                         </span>
 
                         <h1>
@@ -310,44 +293,14 @@ export default function ThinkTalesPage() {
                         </div>
                     </div>
 
-                    {/* HERO VISUAL */}
-                    <div className="thinktales-hero-visual">
-                        <div className="tale-mascot-card">
-                            <div className="tale-mascot-badge">✨ Story-Led Math</div>
-                            <div className="tale-mascot-emoji">🧙‍♂️</div>
-                            <h3>The Sorcerer&apos;s Equation</h3>
-                            <p>Unlock the enchanted runes with prime factors!</p>
-                            <div className="tale-mascot-xp">
-                                <span>⭐ +150 XP</span>
-                                <span>⏱️ 10 min quest</span>
-                            </div>
-                        </div>
-
-                        {/* FLOATING BADGES */}
-                        <div className="floating-badge badge-top-left">
-                            <span className="badge-icon">🚀</span>
-                            <div className="badge-text">
-                                <strong>Space Missions</strong>
-                                <small>Fractions in Action</small>
-                            </div>
-                        </div>
-
-                        <div className="floating-badge badge-top-right">
-                            <span className="badge-icon">🔍</span>
-                            <div className="badge-text">
-                                <strong>Detective Cases</strong>
-                                <small>Logic & Equations</small>
-                            </div>
-                        </div>
-
-                        <div className="floating-badge badge-bottom-right">
-                            <span className="badge-icon">🏆</span>
-                            <div className="badge-text">
-                                <strong>Earn Badges</strong>
-                                <small>Level up your rank</small>
-                            </div>
-                        </div>
-                    </div>
+                    {/* HERO STORYTELLING IMAGE */}
+<div className="thinktales-hero-visual">
+    <img
+        src="/assets/images/thinktales.png"
+        alt="Children enjoying an interactive mathematical storytelling adventure with Intellia360"
+        className="thinktales-story-image"
+    />
+</div>
                 </div>
             </section>
 
@@ -456,11 +409,7 @@ export default function ThinkTalesPage() {
                             )}
                         </div>
 
-                        <div className="teaser-visual">
-                            <div className="teaser-planet">🪐</div>
-                            <div className="teaser-rocket">🚀</div>
-                            <div className="teaser-glow" />
-                        </div>
+                        
                     </div>
                 </div>
             </section>
@@ -519,24 +468,13 @@ export default function ThinkTalesPage() {
                         </div>
 
                         {/* GENRE PILLS */}
-                        <div className="genre-filter-pills">
-                            {genreFilters.map((genre) => (
-                                <button
-                                    key={genre.id}
-                                    type="button"
-                                    className={`genre-pill-btn ${selectedGenre === genre.id ? "active" : ""}`}
-                                    onClick={() => setSelectedGenre(genre.id)}
-                                >
-                                    {genre.label}
-                                </button>
-                            ))}
-                        </div>
+                        
                     </div>
 
                     {/* STORY CARDS GRID */}
                     {filteredStories.length === 0 ? (
                         <div className="empty-stories-state">
-                            <span className="empty-icon">📚</span>
+                            
                             <h3>No Stories Found</h3>
                             <p>Try clearing your search query or selecting a different filter category.</p>
                             <button
@@ -560,7 +498,7 @@ export default function ThinkTalesPage() {
                                         className="story-card-cover"
                                         style={{ background: story.coverGradient }}
                                     >
-                                        <span className="story-icon-badge">{story.icon}</span>
+                                        
                                         <div className="story-cover-tags">
                                             <span className="story-genre-tag">
                                                 {story.genreLabel}
@@ -632,7 +570,7 @@ export default function ThinkTalesPage() {
 
                     <div className="benefits-grid">
                         <div className="benefit-item">
-                            <div className="benefit-icon">🧠</div>
+                            
                             <h3>Relatable Context</h3>
                             <p>
                                 Math isn&apos;t just isolated equations — it becomes the tool that
@@ -641,7 +579,7 @@ export default function ThinkTalesPage() {
                         </div>
 
                         <div className="benefit-item">
-                            <div className="benefit-icon">💡</div>
+                            
                             <h3>Zero Fear of Numbers</h3>
                             <p>
                                 By wrapping challenges inside engaging narratives, anxiety melts away,
@@ -650,7 +588,7 @@ export default function ThinkTalesPage() {
                         </div>
 
                         <div className="benefit-item">
-                            <div className="benefit-icon">🎯</div>
+                            
                             <h3>Adaptive Reasoning</h3>
                             <p>
                                 Multi-layered branching stories challenge students to apply concepts
@@ -659,7 +597,7 @@ export default function ThinkTalesPage() {
                         </div>
 
                         <div className="benefit-item">
-                            <div className="benefit-icon">🔥</div>
+                            
                             <h3>Gamified Motivation</h3>
                             <p>
                                 Earn XP, level up your adventurer profile, unlock new story arcs, and

@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useStudentContext } from "@/context/StudentContext";
+import { useMembership } from "@/lib/billing";
 
 type NavItem = {
   label: string;
@@ -21,7 +22,10 @@ type IconName =
   | "leaderboard"
   | "notifications"
   | "profile"
-  | "lessons";
+  | "lessons"
+  | "play"
+  | "membership"
+  | "demo";
 
 export default function Sidebar() {
   const {
@@ -33,36 +37,78 @@ export default function Sidebar() {
   } = useStudentContext();
 
   const pathname = usePathname();
+  const { access } = useMembership();
+  // The IntelliaPlay add-on: shown locked until bought (never while billing is off).
+  const playLocked = access !== null && !access.intelliaPlay;
 
   const [collapsed, setCollapsed] = useState(false);
   const [lessonsOpen, setLessonsOpen] = useState(true);
+
+  // Mobile drawer state is separate from desktop collapse state.
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  // Close the mobile drawer when moving back to desktop.
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth > 767) {
+        setMobileOpen(false);
+      } else {
+        setCollapsed(false);
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  // Allow Escape to close the mobile drawer.
+  useEffect(() => {
+    if (!mobileOpen) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setMobileOpen(false);
+      }
+    };
+
+    const previousOverflow = document.body.style.overflow;
+    document.addEventListener("keydown", handleKeyDown);
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [mobileOpen]);
+
+  const closeMobileDrawer = () => {
+    if (window.matchMedia("(max-width: 767px)").matches) {
+      setMobileOpen(false);
+    }
+  };
+
+  const handleSidebarToggle = () => {
+    if (window.matchMedia("(max-width: 767px)").matches) {
+      setMobileOpen(false);
+      return;
+    }
+
+    setCollapsed((value) => !value);
+  };
 
   const [openChapters, setOpenChapters] = useState<
     Record<string, boolean>
   >({});
 
-  const currentLessonId = activeLessonData?.id;
+  const lessonPathMatch = pathname.match(/^\/student\/lesson\/([^/]+)/);
+  const currentLessonId = lessonPathMatch?.[1] ?? activeLessonData?.id;
+  const isCurrentLesson = (lessonId: string) =>
+    lessonId === currentLessonId ||
+    encodeURIComponent(lessonId) === currentLessonId;
 
-  /*
-   * Automatically open the chapter
-   * containing the current lesson.
-   */
-  useEffect(() => {
-    if (!curriculum?.chapters || !currentLessonId) return;
-
-    const currentChapter = curriculum.chapters.find((chapter) =>
-      chapter.topics.some(
-        (topic) => topic.id === currentLessonId
-      )
-    );
-
-    if (currentChapter) {
-      setOpenChapters((previous) => ({
-        ...previous,
-        [currentChapter.id]: true,
-      }));
-    }
-  }, [curriculum, currentLessonId]);
+  const currentChapterId = curriculum?.chapters.find((chapter) =>
+    chapter.topics.some((topic) => isCurrentLesson(topic.id))
+  )?.id;
 
   /*
    * Toggle individual chapter.
@@ -70,7 +116,7 @@ export default function Sidebar() {
   const toggleChapter = (chapterId: string) => {
     setOpenChapters((previous) => ({
       ...previous,
-      [chapterId]: !previous[chapterId],
+      [chapterId]: !(previous[chapterId] ?? chapterId === currentChapterId),
     }));
   };
 
@@ -114,9 +160,24 @@ export default function Sidebar() {
       href: "/student/leaderboard",
     },
     {
+      label: "IntelliaPlay",
+      icon: "play",
+      href: "/student/intelliaplay",
+    },
+    {
       label: "Notifications",
       icon: "notifications",
       href: "/student/notifications",
+    },
+    {
+      label: "Demo Lessons",
+      icon: "demo",
+      href: "/student/demo-lessons",
+    },
+    {
+      label: "Membership",
+      icon: "membership",
+      href: "/student/membership",
     },
     {
       label: "Profile",
@@ -145,13 +206,12 @@ export default function Sidebar() {
     return (
       <aside
         className={`student-sidebar-container ${collapsed ? "is-collapsed" : ""
-          }`}
+          } ${mobileOpen ? "is-mobile-open" : ""}`}
       >
         <SidebarHeader
           collapsed={collapsed}
-          onToggle={() =>
-            setCollapsed((value) => !value)
-          }
+          onToggle={handleSidebarToggle}
+          onNavigate={closeMobileDrawer}
         />
 
         {!collapsed && (
@@ -164,321 +224,345 @@ export default function Sidebar() {
   }
 
   return (
-    <aside
-      className={`student-sidebar-container ${collapsed ? "is-collapsed" : ""
-        }`}
-    >
-      {/* =========================================
-          SIDEBAR HEADER
-      ========================================== */}
-      <SidebarHeader
-        collapsed={collapsed}
-        onToggle={() =>
-          setCollapsed((value) => !value)
-        }
+    <>
+      <button
+        type="button"
+        className={`student-sidebar-mobile-overlay ${mobileOpen ? "is-visible" : ""
+          }`}
+        aria-label="Close student navigation"
+        aria-hidden={!mobileOpen}
+        tabIndex={-1}
+        onClick={closeMobileDrawer}
       />
 
-      {/* Wrapper to handle scrolling inside the sidebar while keeping height full */}
-      <div className="student-sidebar-scroll-area">
+      <button
+        type="button"
+        className={`student-sidebar-mobile-trigger ${mobileOpen ? "is-open" : ""}`}
+        aria-label={mobileOpen ? "Close sidebar" : "Open sidebar"}
+        aria-expanded={mobileOpen}
+        aria-controls="student-navigation-drawer"
+        onClick={() => setMobileOpen((value) => !value)}
+      >
+        <span />
+        <span />
+        <span />
+      </button>
+
+      <aside
+        id="student-navigation-drawer"
+        className={`student-sidebar-container ${collapsed ? "is-collapsed" : ""
+          } ${mobileOpen ? "is-mobile-open" : ""}`}
+      >
         {/* =========================================
+          SIDEBAR HEADER
+      ========================================== */}
+        <SidebarHeader
+          collapsed={collapsed}
+          onToggle={handleSidebarToggle}
+          onNavigate={closeMobileDrawer}
+        />
+
+        {/* Wrapper to handle scrolling inside the sidebar while keeping height full */}
+        <div className="student-sidebar-scroll-area">
+          {/* =========================================
             NAVIGATION
         ========================================== */}
-        <nav
-          className="student-sidebar-nav"
-          aria-label="Student navigation"
-        >
-          {!collapsed && (
-            <div className="student-sidebar-nav-heading">
-              <span>YOUR SPACE</span>
-              <i />
-            </div>
-          )}
-
-          <div className="student-sidebar-nav-group">
-            {navItems.map((item) => (
-              <Link
-                key={item.label}
-                href={item.href ?? "#"}
-                className={`student-sidebar-nav-item ${isActive(item.href) ? "active" : ""
-                  }`}
-                title={collapsed ? item.label : undefined}
-                aria-current={isActive(item.href) ? "page" : undefined}
-              >
-                <span className="student-sidebar-nav-icon">
-                  <SidebarIcon name={item.icon} />
-                </span>
-
-                {!collapsed && (
-                  <span className="student-sidebar-nav-label">
-                    {item.label}
-                  </span>
-                )}
-
-                {item.label === "Notifications" && !collapsed && (
-                  <span className="student-sidebar-badge">NEW</span>
-                )}
-              </Link>
-            ))}
-          </div>
-
-          {/* =========================================
-              LESSONS
-          ========================================== */}
-          <div className="student-sidebar-section">
+          <nav
+            className="student-sidebar-nav"
+            aria-label="Student navigation"
+          >
             {!collapsed && (
-              <div className="student-sidebar-section-label">
-                <span>LEARNING JOURNEY</span>
+              <div className="student-sidebar-nav-heading">
+                <span>YOUR SPACE</span>
+                <i />
               </div>
             )}
 
-            <button
-              type="button"
-              className={`student-sidebar-nav-item student-sidebar-expand-btn ${lessonsOpen ? "expanded" : ""
-                }`}
-              onClick={() =>
-                setLessonsOpen(
-                  (value) => !value
-                )
-              }
-              title={
-                collapsed
-                  ? "Lessons"
-                  : undefined
-              }
-              aria-expanded={lessonsOpen}
-            >
-              <span className="student-sidebar-nav-icon">
-                <SidebarIcon name="lessons" />
-              </span>
-
-              {!collapsed && (
-                <>
-                  <span className="student-sidebar-nav-label">
-                    Lessons
+            <div className="student-sidebar-nav-group">
+              {navItems.map((item) => (
+                <Link
+                  key={item.label}
+                  href={item.href ?? "#"}
+                  className={`student-sidebar-nav-item ${isActive(item.href) ? "active" : ""
+                    }`}
+                  title={collapsed ? item.label : undefined}
+                  aria-current={isActive(item.href) ? "page" : undefined}
+                  onClick={closeMobileDrawer}
+                >
+                  <span className="student-sidebar-nav-icon">
+                    <SidebarIcon name={item.icon} />
                   </span>
 
-                  <span
-                    className="student-sidebar-chevron"
-                    aria-hidden="true"
-                  >
-                    {lessonsOpen ? "⌄" : "›"}
-                  </span>
-                </>
-              )}
-            </button>
-
-            {/* =========================================
-                CHAPTERS
-            ========================================== */}
-            {!collapsed &&
-              lessonsOpen && (
-                <div className="student-sidebar-submenu">
-                  {curriculum.chapters.length ===
-                    0 ? (
-                    <div className="student-sidebar-empty">
-                      No lessons available
-                    </div>
-                  ) : (
-                    curriculum.chapters.map(
-                      (chapter) => {
-                        const isChapterOpen =
-                          Boolean(
-                            openChapters[
-                            chapter.id
-                            ]
-                          );
-
-                        const topics =
-                          chapter.topics ?? [];
-
-                        const completedCount =
-                          topics.filter(
-                            (topic) =>
-                              completedLessons.includes(
-                                topic.id
-                              )
-                          ).length;
-
-                        return (
-                          <div
-                            key={chapter.id}
-                            className={`student-sidebar-chapter ${isChapterOpen
-                                ? "chapter-open"
-                                : ""
-                              }`}
-                          >
-                            <button
-                              type="button"
-                              className="student-sidebar-chapter-btn"
-                              onClick={() =>
-                                toggleChapter(
-                                  chapter.id
-                                )
-                              }
-                              aria-expanded={
-                                isChapterOpen
-                              }
-                            >
-                              <span className="student-sidebar-chapter-arrow">
-                                {isChapterOpen
-                                  ? "⌄"
-                                  : "›"}
-                              </span>
-
-                              <span className="student-sidebar-chapter-number">
-                                {chapter.chapterNumber}
-                              </span>
-
-                              <span className="student-sidebar-chapter-info">
-                                <span className="student-sidebar-chapter-title">
-                                  {chapter.title}
-                                </span>
-
-                                <span className="student-sidebar-chapter-meta">
-                                  {completedCount}/
-                                  {topics.length}{" "}
-                                  lessons
-                                </span>
-                              </span>
-                            </button>
-
-                            {isChapterOpen &&
-                              topics.length >
-                              0 && (
-                                <div className="student-sidebar-topic-list">
-                                  {topics.map(
-                                    (
-                                      topic
-                                    ) => {
-                                      const isActive =
-                                        currentLessonId ===
-                                        topic.id;
-
-                                      const isCompleted =
-                                        completedLessons.includes(
-                                          topic.id
-                                        );
-
-                                      const isLocked =
-                                        topic.status ===
-                                        "locked";
-
-                                      return (
-                                        <Link
-                                          key={
-                                            topic.id
-                                          }
-                                          href={
-                                            isLocked
-                                              ? "#"
-                                              : `/student/lesson/${encodeURIComponent(
-                                                topic.id
-                                              )}`
-                                          }
-                                          onClick={(
-                                            event
-                                          ) => {
-                                            if (
-                                              isLocked
-                                            ) {
-                                              event.preventDefault();
-                                              return;
-                                            }
-
-                                            setActiveLessonId(
-                                              topic.id
-                                            );
-                                          }}
-                                          className={`student-sidebar-topic ${isActive
-                                              ? "active"
-                                              : ""
-                                            } ${isCompleted
-                                              ? "completed"
-                                              : ""
-                                            } ${isLocked
-                                              ? "locked"
-                                              : ""
-                                            }`}
-                                          title={topic.title}
-                                          aria-current={isActive ? "page" : undefined}
-                                        >
-                                          <span className="student-sidebar-topic-line" />
-                                          <span className="student-sidebar-topic-dot">
-                                            {isCompleted
-                                              ? "✓"
-                                              : ""}
-                                          </span>
-                                          <span className="student-sidebar-topic-title">
-                                            {
-                                              topic.title
-                                            }
-                                          </span>
-
-                                          {isActive &&
-                                            !isLocked && (
-                                              <span className="student-sidebar-topic-current">
-                                                Current
-                                              </span>
-                                            )}
-
-                                          {isLocked && (
-                                            <span className="student-sidebar-topic-lock">
-                                              <LockIcon />
-                                            </span>
-                                          )}
-                                        </Link>
-                                      );
-                                    }
-                                  )}
-                                </div>
-                              )}
-
-                            {isChapterOpen &&
-                              topics.length ===
-                              0 && (
-                                <div className="student-sidebar-chapter-empty">
-                                  No lessons in this
-                                  chapter
-                                </div>
-                              )}
-                          </div>
-                        );
-                      }
-                    )
+                  {!collapsed && (
+                    <span className="student-sidebar-nav-label">
+                      {item.label}
+                    </span>
                   )}
-                </div>
-              )}
-          </div>
-        </nav>
-      </div>
 
-      {/* =========================================
-          CURRENT GRADE (FOOTER)
-      ========================================== */}
-      {!collapsed && (
-        <div className="student-sidebar-footer">
-          <div className="student-sidebar-grade-card">
-            <span className="student-sidebar-grade-icon">
-              <GraduationIcon />
-            </span>
+                  {item.label === "Notifications" && !collapsed && (
+                    <span className="student-sidebar-badge">NEW</span>
+                  )}
 
-            <div>
-              <strong>
-                {currentGrade?.toUpperCase()}
-              </strong>
-
-              <span>
-                Current Grade
-              </span>
+                  {item.label === "IntelliaPlay" && playLocked && !collapsed && (
+                    <span className="student-sidebar-badge" aria-label="Add-on, not unlocked">
+                      <LockIcon />
+                    </span>
+                  )}
+                </Link>
+              ))}
             </div>
 
-            <span className="student-sidebar-grade-count">
-              {completedLessons.length} done
-            </span>
-          </div>
+            {/* =========================================
+              LESSONS
+          ========================================== */}
+            <div className="student-sidebar-section">
+              {!collapsed && (
+                <div className="student-sidebar-section-label">
+                  <span>LEARNING JOURNEY</span>
+                </div>
+              )}
+
+              <button
+                type="button"
+                className={`student-sidebar-nav-item student-sidebar-expand-btn ${lessonsOpen ? "expanded" : ""
+                  }`}
+                onClick={() =>
+                  setLessonsOpen(
+                    (value) => !value
+                  )
+                }
+                title={
+                  collapsed
+                    ? "Lessons"
+                    : undefined
+                }
+                aria-expanded={lessonsOpen}
+              >
+                <span className="student-sidebar-nav-icon">
+                  <SidebarIcon name="lessons" />
+                </span>
+
+                {!collapsed && (
+                  <>
+                    <span className="student-sidebar-nav-label">
+                      Lessons
+                    </span>
+
+                    <span
+                      className="student-sidebar-chevron"
+                      aria-hidden="true"
+                    >
+                      {lessonsOpen ? "⌄" : "›"}
+                    </span>
+                  </>
+                )}
+              </button>
+
+              {/* =========================================
+                CHAPTERS
+            ========================================== */}
+              {!collapsed &&
+                lessonsOpen && (
+                  <div className="student-sidebar-submenu">
+                    {curriculum.chapters.length ===
+                      0 ? (
+                      <div className="student-sidebar-empty">
+                        No lessons available
+                      </div>
+                    ) : (
+                      curriculum.chapters.map(
+                        (chapter) => {
+                          const isChapterOpen =
+                            openChapters[chapter.id] ??
+                            chapter.id === currentChapterId;
+
+                          const topics =
+                            chapter.topics ?? [];
+
+                          const completedCount =
+                            topics.filter(
+                              (topic) =>
+                                completedLessons.includes(
+                                  topic.id
+                                )
+                            ).length;
+
+                          return (
+                            <div
+                              key={chapter.id}
+                              className={`student-sidebar-chapter ${isChapterOpen
+                                ? "chapter-open"
+                                : ""
+                                }`}
+                            >
+                              <button
+                                type="button"
+                                className="student-sidebar-chapter-btn"
+                                onClick={() =>
+                                  toggleChapter(
+                                    chapter.id
+                                  )
+                                }
+                                aria-expanded={
+                                  isChapterOpen
+                                }
+                              >
+                                <span className="student-sidebar-chapter-arrow">
+                                  {isChapterOpen
+                                    ? "⌄"
+                                    : "›"}
+                                </span>
+
+                                <span className="student-sidebar-chapter-number">
+                                  {chapter.chapterNumber}
+                                </span>
+
+                                <span className="student-sidebar-chapter-info">
+                                  <span className="student-sidebar-chapter-title">
+                                    {chapter.title}
+                                  </span>
+
+                                  <span className="student-sidebar-chapter-meta">
+                                    {completedCount}/
+                                    {topics.length}{" "}
+                                    lessons
+                                  </span>
+                                </span>
+                              </button>
+
+                              {isChapterOpen &&
+                                topics.length >
+                                0 && (
+                                  <div className="student-sidebar-topic-list">
+                                    {topics.map(
+                                      (
+                                        topic
+                                      ) => {
+                                        const isActive =
+                                          isCurrentLesson(topic.id);
+
+                                        const isCompleted =
+                                          completedLessons.includes(
+                                            topic.id
+                                          );
+
+                                        const isLocked =
+                                          topic.status ===
+                                          "locked";
+
+                                        return (
+                                          <Link
+                                            key={
+                                              topic.id
+                                            }
+                                            href={
+                                              isLocked
+                                                ? "#"
+                                                : `/student/lesson/${encodeURIComponent(
+                                                  topic.id
+                                                )}`
+                                            }
+                                            onClick={(
+                                              event
+                                            ) => {
+                                              if (
+                                                isLocked
+                                              ) {
+                                                event.preventDefault();
+                                                return;
+                                              }
+
+                                              setActiveLessonId(
+                                                topic.id
+                                              );
+                                              closeMobileDrawer();
+                                            }}
+                                            className={`student-sidebar-topic ${isActive
+                                              ? "active"
+                                              : ""
+                                              } ${isCompleted
+                                                ? "completed"
+                                                : ""
+                                              } ${isLocked
+                                                ? "locked"
+                                                : ""
+                                              }`}
+                                            title={topic.title}
+                                            aria-current={isActive ? "page" : undefined}
+                                          >
+                                            <span className="student-sidebar-topic-line" />
+                                            <span className="student-sidebar-topic-dot">
+                                              {isCompleted
+                                                ? "✓"
+                                                : ""}
+                                            </span>
+                                            <span className="student-sidebar-topic-title">
+                                              {
+                                                topic.title
+                                              }
+                                            </span>
+
+
+
+                                            {isLocked && (
+                                              <span className="student-sidebar-topic-lock">
+                                                <LockIcon />
+                                              </span>
+                                            )}
+                                          </Link>
+                                        );
+                                      }
+                                    )}
+                                  </div>
+                                )}
+
+                              {isChapterOpen &&
+                                topics.length ===
+                                0 && (
+                                  <div className="student-sidebar-chapter-empty">
+                                    No lessons in this
+                                    chapter
+                                  </div>
+                                )}
+                            </div>
+                          );
+                        }
+                      )
+                    )}
+                  </div>
+                )}
+            </div>
+          </nav>
         </div>
-      )}
-    </aside>
+
+        {/* =========================================
+          CURRENT GRADE (FOOTER)
+      ========================================== */}
+        {!collapsed && (
+          <div className="student-sidebar-footer">
+            <div className="student-sidebar-grade-card">
+              <span className="student-sidebar-grade-icon">
+                <GraduationIcon />
+              </span>
+
+              <div>
+                <strong>
+                  {currentGrade?.toUpperCase()}
+                </strong>
+
+                <span>
+                  Current Grade
+                </span>
+              </div>
+
+              <span className="student-sidebar-grade-count">
+                {completedLessons.length} done
+              </span>
+            </div>
+          </div>
+        )}
+      </aside>
+    </>
   );
 }
 
@@ -489,9 +573,11 @@ export default function Sidebar() {
 function SidebarHeader({
   collapsed,
   onToggle,
+  onNavigate,
 }: {
   collapsed: boolean;
   onToggle: () => void;
+  onNavigate: () => void;
 }) {
   return (
     <div className="student-sidebar-header">
@@ -500,6 +586,7 @@ function SidebarHeader({
           href="/student/dashboard"
           className="student-sidebar-brand"
           aria-label="Student Dashboard"
+          onClick={onNavigate}
         >
           <span className="student-sidebar-logo-mark">
             <LogoCube />
@@ -613,6 +700,28 @@ function SidebarIcon({ name }: { name: IconName }) {
         <path d="m4 6 8-3 8 3-8 3-8-3Z" />
         <path d="m4 10 8 3 8-3M4 14l8 3 8-3" />
         <path d="M12 9v8" />
+      </>
+    ),
+    play: (
+      <>
+        <rect x="2.5" y="7" width="19" height="11" rx="5.5" />
+        <path d="M7.5 10.5v4M5.5 12.5h4" />
+        <path d="M15.5 11.5h.01M18 13.5h.01" />
+      </>
+    ),
+    membership: (
+      <>
+        <rect x="3" y="5.5" width="18" height="13" rx="2.5" />
+        <path d="M3 10h18" />
+        <path d="M7 15h4" />
+      </>
+    ),
+    demo: (
+      <>
+        <rect x="2" y="3" width="20" height="14" rx="2" />
+        <path d="M8 21h8M12 17v4" />
+        <path d="m10 10 2-2 2 2" />
+        <path d="M12 8v5" />
       </>
     ),
   };

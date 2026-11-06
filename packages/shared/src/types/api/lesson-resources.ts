@@ -28,6 +28,28 @@ export interface LessonVideoResources {
   embedUrl: string | null;
 }
 
+/** A lesson's test as planned from its topic — no student data. */
+export interface LessonTestSummary {
+  /** Served by GET /api/student/quiz/<quizId>; always "test-<lessonId>". */
+  quizId: string;
+  questionCount: number;
+  durationSeconds: number;
+  /** What the questions cover: topic names, or the chapter's lessons for a chapter test. */
+  covers: string[];
+  /** A chapter's "Test Series" lesson, drawing on every lesson in the chapter. */
+  chapterTest: boolean;
+}
+
+/** The lesson test on the student lesson screen, with the student's own results. */
+export type StudentLessonTest =
+  | ({ available: true } & LessonTestSummary & {
+      attempts: number;
+      /** 0–100, null before the first attempt. */
+      bestScore: number | null;
+      lastScore: number | null;
+    })
+  | { available: false };
+
 export interface ResolvedLessonResources {
   lessonId: string;
   grade: string;
@@ -37,9 +59,12 @@ export interface ResolvedLessonResources {
   architectureUrl: string | null;
   video: LessonVideoResources;
   eduNotes: EduNotesSource | null;
+  /** Null when no test fits the lesson, or its lesson file sets `"test": { "enabled": false }`. */
+  test: LessonTestSummary | null;
 }
 
 /** What /api/student/lesson-resources returns to the lesson screen. */
-export type StudentLessonResources = Omit<ResolvedLessonResources, "eduNotes"> & {
+export type StudentLessonResources = Omit<ResolvedLessonResources, "eduNotes" | "test"> & {
   eduNotes: { available: boolean };
+  test: StudentLessonTest;
 };

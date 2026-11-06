@@ -120,29 +120,57 @@ export const StudentProvider = ({ children }: { children: ReactNode }) => {
     return { streak: storedStreak || 1, date: todayStr };
   };
 
-  // Load curriculum dynamically based on grade
+  // Load the grade's curriculum. The API serves what the editor saved
+  // (/api/student/curriculum). The copy bundled at build time comes from the
+  // repository, so it lags behind the editor — it is only the fallback for when
+  // the API can't be reached.
   useEffect(() => {
-    const loadCurriculum = async () => {
+    let cancelled = false;
+
+    async function fromApi(): Promise<Curriculum | null> {
+      try {
+        const res = await apiFetch(
+          `/api/student/curriculum?grade=${encodeURIComponent(currentGrade)}`,
+          { cache: "no-store" }
+        );
+        if (!res.ok) return null;
+        const json = await res.json();
+        return json?.success && Array.isArray(json.data?.chapters) ? (json.data as Curriculum) : null;
+      } catch {
+        return null;
+      }
+    }
+
+    async function fromBundle(): Promise<Curriculum | null> {
       try {
         const data = await import(`../data/grades/${currentGrade}/curriculum.json`);
-        setCurriculum(data.default || data);
-
-        // If we don't have an active lesson, or if the current active lesson doesn't exist in the new curriculum, reset it
-        const allTopics = (data.default || data).chapters.flatMap((c: CurriculumChapter) => c.topics);
-        if (allTopics.length > 0) {
-           setActiveLessonIdState((prev) => {
-               if (!prev || !allTopics.find((t: CurriculumTopic) => t.id === prev)) {
-                   return allTopics[0].id;
-               }
-               return prev;
-           });
-        }
+        return (data.default || data) as Curriculum;
       } catch (err) {
         console.error(`Failed to load curriculum for ${currentGrade}`, err);
-        setCurriculum(null);
+        return null;
       }
+    }
+
+    (async () => {
+      const loaded = (await fromApi()) ?? (await fromBundle());
+      if (cancelled) return;
+      setCurriculum(loaded);
+
+      // If we don't have an active lesson, or if the current active lesson doesn't exist in the new curriculum, reset it
+      const allTopics = (loaded?.chapters ?? []).flatMap((c: CurriculumChapter) => c.topics ?? []);
+      if (allTopics.length > 0) {
+        setActiveLessonIdState((prev) => {
+          if (!prev || !allTopics.find((t: CurriculumTopic) => t.id === prev)) {
+            return allTopics[0].id;
+          }
+          return prev;
+        });
+      }
+    })();
+
+    return () => {
+      cancelled = true;
     };
-    loadCurriculum();
   }, [currentGrade]);
 
   // Fetch authenticated student profile & backend progress on mount / session start

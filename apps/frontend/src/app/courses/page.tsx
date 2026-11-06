@@ -229,35 +229,13 @@ export default function CoursesPage() {
 
 
                     {/* HERO VISUAL */}
-
-                    <div className="courses-hero-visual">
-
-                        <div className="course-emoji-card">
-                            🚀
-                        </div>
-
-                        <div className="floating-course-card card-one">
-                            🧮
-                            <span>
-                                Interactive Math
-                            </span>
-                        </div>
-
-                        <div className="floating-course-card card-two">
-                            ⭐
-                            <span>
-                                Earn XP & Rewards
-                            </span>
-                        </div>
-
-                        <div className="floating-course-card card-three">
-                            🧠
-                            <span>
-                                Learn Smarter
-                            </span>
-                        </div>
-
-                    </div>
+<div className="courses-hero-visual">
+    <img
+        src="/assets/images/course.png"
+        alt="Intellia360 Math Learning Universe"
+        className="courses-hero-image"
+    />
+</div>
 
                 </div>
 

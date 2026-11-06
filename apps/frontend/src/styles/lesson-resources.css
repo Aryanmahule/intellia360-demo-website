@@ -1,7 +1,7 @@
 /* ============================================================
-   LESSON RESOURCES — topic-wise Videos & EduNotes
-   Scoped to .lesson-resource-*, .lesson-video-* and .edunotes-*
-   class names used only by the lesson screens.
+   LESSON RESOURCES — topic-wise Videos, EduNotes & Test
+   Scoped to .lesson-resource-*, .lesson-video-*, .edunotes-* and
+   .lesson-test-* class names used only by the lesson screens.
 ============================================================ */
 
 /* ---------- Resource switcher ---------- */
@@ -46,6 +46,164 @@
     border-color: #e2e8f0;
     cursor: not-allowed;
     pointer-events: none;
+}
+
+/* ---------- Architecture lesson player ---------- */
+
+.student-lesson-page {
+    min-height: 100%;
+    padding: clamp(14px, 2vw, 28px);
+    background: #f5f7ff;
+}
+
+.student-lesson-page__content {
+    width: 100%;
+}
+
+.student-lesson-shell {
+    width: 100%;
+    max-width: 1500px;
+    margin: 0 auto;
+}
+
+.student-lesson-header {
+    padding: clamp(18px, 2.2vw, 28px) clamp(16px, 2.5vw, 32px);
+    margin-bottom: 20px;
+    background: #ffffff;
+    border-radius: 24px;
+    box-shadow: 0 10px 40px rgba(37, 99, 235, .08);
+}
+
+.student-lesson-title {
+    margin: 0 0 8px;
+    color: #172554;
+    font-size: clamp(24px, 2.2vw, 32px);
+    font-weight: 800;
+    line-height: 1.2;
+    overflow-wrap: anywhere;
+}
+
+.student-lesson-subtitle {
+    margin: 0;
+    color: #64748b;
+    font-size: 16px;
+    overflow-wrap: anywhere;
+}
+
+.lesson-architecture-viewer {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+    min-width: 0;
+    padding: 12px;
+    overflow: visible;
+    background: #ffffff;
+    border-radius: 24px;
+    box-shadow: 0 10px 40px rgba(37, 99, 235, .08);
+    box-sizing: border-box;
+}
+
+.lesson-architecture-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-height: 44px;
+    padding: 0 4px;
+}
+
+.lesson-architecture-toolbar-title {
+    min-width: 0;
+    color: #172554;
+    font-size: 16px;
+    font-weight: 800;
+    overflow-wrap: anywhere;
+}
+
+.lesson-architecture-fullscreen {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 44px;
+    padding: 10px 14px;
+    color: #ffffff;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    background: linear-gradient(135deg, #2563eb, #4f46e5);
+    border: 0;
+    border-radius: 12px;
+    cursor: pointer;
+    touch-action: manipulation;
+}
+
+.lesson-architecture-fullscreen:hover {
+    filter: brightness(1.05);
+}
+
+.lesson-architecture-fullscreen:focus-visible {
+    outline: 3px solid #93c5fd;
+    outline-offset: 3px;
+}
+
+.lesson-architecture-frame {
+    display: block;
+    flex: 0 0 auto;
+    width: 100%;
+    height: max(750px, calc(100dvh - 250px));
+    max-width: 100%;
+    border: 0;
+    border-radius: 20px;
+    background: #ffffff;
+}
+
+.lesson-architecture-loading {
+    position: absolute;
+    inset: 68px 12px 12px;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    text-align: center;
+    background: linear-gradient(135deg, #eef2ff, #f8faff);
+    border-radius: 20px;
+}
+
+.lesson-architecture-loading-title {
+    margin: 0 0 8px;
+    color: #172554;
+    font-size: clamp(20px, 2vw, 28px);
+    font-weight: 800;
+}
+
+.lesson-architecture-loading-copy {
+    margin: 0;
+    color: #64748b;
+    font-size: 16px;
+}
+
+.lesson-architecture-viewer:fullscreen {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    min-height: 0;
+    padding: 12px;
+    overflow: auto;
+    background: #f5f7ff;
+    border-radius: 0;
+}
+
+.lesson-architecture-viewer:fullscreen .lesson-architecture-frame {
+    flex: 1 1 auto;
+    height: auto;
+    min-height: 0;
 }
 
 /* ---------- Video page ---------- */
@@ -300,10 +458,276 @@
     margin-top: 0;
 }
 
+/* ---------- Lesson test ----------
+   The test's question, option and result styles come from
+   student/quiz/quiz.css; these lay it out inside the lesson screen. Rules
+   that adjust a quiz.css class are scoped under .lesson-test-*, so they win
+   whatever order the two stylesheets load in. */
+
+.lesson-test-intro {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 320px);
+    gap: 20px;
+    align-items: start;
+}
+
+.lesson-test-intro-main,
+.lesson-test-tip,
+.lesson-test-panel,
+.lesson-test-bar {
+    background: #ffffff;
+    border-radius: 24px;
+    box-shadow: 0 10px 40px rgba(37, 99, 235, .08);
+}
+
+.lesson-test-intro-main {
+    padding: 32px;
+}
+
+.lesson-test-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: #c2410c;
+    background: rgba(249, 115, 22, .1);
+    border-radius: 999px;
+}
+
+.lesson-test-intro-main h2 {
+    margin: 14px 0 8px;
+    font-size: 28px;
+    font-weight: 800;
+    color: #172554;
+}
+
+.lesson-test-lead {
+    max-width: 640px;
+    margin: 0 0 20px;
+    font-size: 15px;
+    line-height: 1.6;
+    color: #64748b;
+}
+
+.lesson-test-covers {
+    margin-bottom: 22px;
+}
+
+.lesson-test-covers-label {
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: #64748b;
+}
+
+.lesson-test-covers ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 8px 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.lesson-test-covers li {
+    padding: 6px 12px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #3730a3;
+    background: #eef2ff;
+    border-radius: 999px;
+}
+
+.lesson-test-stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+    margin: 0 0 24px;
+}
+
+.lesson-test-stats div {
+    padding: 14px;
+    background: #f8faff;
+    border: 1px solid #e6ecfa;
+    border-radius: 14px;
+}
+
+.lesson-test-stats dt {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    color: #64748b;
+}
+
+.lesson-test-stats dd {
+    margin: 4px 0 0;
+    font-size: 20px;
+    font-weight: 800;
+    color: #172554;
+}
+
+.lesson-test-start {
+    min-height: 48px;
+    padding: 0 24px;
+    font-size: 15px;
+}
+
+.lesson-test-tip {
+    padding: 24px;
+}
+
+.lesson-test-tip-icon {
+    font-size: 32px;
+    line-height: 1;
+}
+
+.lesson-test-tip h3 {
+    margin: 10px 0 6px;
+    font-size: 17px;
+    font-weight: 800;
+    color: #172554;
+}
+
+.lesson-test-tip p {
+    margin: 0 0 14px;
+    font-size: 14px;
+    line-height: 1.55;
+    color: #64748b;
+}
+
+.lesson-test-revisit-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.lesson-test-tip .lesson-test-revisit-links {
+    flex-direction: column;
+}
+
+.lesson-video-state-card .lesson-test-revisit-links,
+.lesson-test-revisit .lesson-test-revisit-links {
+    justify-content: center;
+    margin-top: 16px;
+}
+
+.lesson-test-revisit-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #1e293b;
+    text-decoration: none;
+    background: #ffffff;
+    border: 1px solid #dbe3f4;
+    border-radius: 12px;
+    transition: border-color .18s ease, background .18s ease;
+}
+
+.lesson-test-revisit-link:hover {
+    background: #f8faff;
+    border-color: #93c5fd;
+}
+
+.lesson-test-panel .quiz-loading {
+    min-height: 50vh;
+}
+
+/* Taking the test */
+
+.lesson-test-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 18px 22px;
+    margin-bottom: 18px;
+}
+
+.lesson-test-bar-title {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.lesson-test-bar-title strong {
+    font-size: 18px;
+    font-weight: 800;
+    color: #172554;
+    overflow-wrap: anywhere;
+}
+
+/* Test questions carry data and word problems, so they need room to read. */
+.lesson-test-run .question-title {
+    margin-bottom: 24px;
+    font-size: clamp(20px, 2.2vw, 28px);
+    overflow-wrap: anywhere;
+}
+
+.lesson-test-run .option-text {
+    overflow-wrap: anywhere;
+}
+
+.lesson-test-unanswered,
+.lesson-test-submit-error {
+    margin: 14px 0 0;
+    font-size: 13px;
+    font-weight: 700;
+    color: #b45309;
+}
+
+.lesson-test-submit-error {
+    padding: 10px 12px;
+    color: #b91c1c;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 12px;
+}
+
+/* Result */
+
+.lesson-test-result.quiz-result-page {
+    width: min(820px, 100%);
+    margin: 0 auto;
+}
+
+.lesson-test-result .result-actions a {
+    text-decoration: none;
+}
+
+.lesson-test-revisit {
+    text-align: center;
+}
+
+.lesson-test-revisit p {
+    margin: 0;
+    font-size: 14px;
+    color: #64748b;
+}
+
+.lesson-test-review-answer,
+.lesson-test-review-why {
+    display: block;
+    margin-top: 4px;
+}
+
+.lesson-test-review-why {
+    color: #475569;
+}
+
 /* ---------- Responsive ---------- */
 
 @media (max-width: 1024px) {
-    .lesson-video-layout {
+    .lesson-video-layout,
+    .lesson-test-intro {
         grid-template-columns: minmax(0, 1fr);
     }
 
@@ -313,6 +737,38 @@
 }
 
 @media (max-width: 640px) {
+
+    .student-lesson-page {
+        padding: 14px 12px;
+    }
+
+    .student-lesson-header {
+        margin-bottom: 14px;
+        border-radius: 18px;
+    }
+
+    .lesson-architecture-toolbar {
+        align-items: flex-start;
+    }
+
+    .lesson-architecture-toolbar-title {
+        padding-top: 12px;
+        font-size: 14px;
+    }
+
+    .lesson-architecture-fullscreen {
+        padding: 9px 10px;
+        font-size: 13px;
+    }
+
+    .lesson-architecture-frame {
+        height: max(560px, calc(100dvh - 180px));
+        border-radius: 14px;
+    }
+
+    .lesson-architecture-viewer:fullscreen {
+        padding: 8px;
+    }
 
     .lesson-video-page,
     .edunotes-page-wrapper {
@@ -344,5 +800,29 @@
     .lesson-video-state h2,
     .edunotes-state h2 {
         font-size: 20px;
+    }
+
+    .lesson-test-intro-main,
+    .lesson-test-tip {
+        padding: 22px 18px;
+        border-radius: 18px;
+    }
+
+    .lesson-test-intro-main h2 {
+        font-size: 22px;
+    }
+
+    .lesson-test-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .lesson-test-start {
+        width: 100%;
+    }
+
+    .lesson-test-bar {
+        flex-direction: column;
+        align-items: stretch;
+        border-radius: 18px;
     }
 }

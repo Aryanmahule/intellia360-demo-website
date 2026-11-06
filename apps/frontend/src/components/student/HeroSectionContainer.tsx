@@ -1,5 +1,25 @@
 "use client";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
+import type { ReactNode } from "react";
+import {
+  ArrowLeftRight,
+  Calculator,
+  Circle,
+  Clock3,
+  Coins,
+  Copy,
+  Gem,
+  Heart,
+  MoveVertical,
+  Pizza,
+  Play,
+  Ruler,
+  Sparkles,
+  Star,
+  Target,
+  Triangle,
+  Trophy,
+} from "lucide-react";
 import type { DashboardHeroSlide } from "@intellia360/shared/types/student";
 
 const HERO_BACKGROUND_IMAGES = [
@@ -20,8 +40,7 @@ interface HeroSectionContainerProps {
 
 
 
-// Particles for the floating effects
-const HERO_PARTICLES = ["✨", "⭐", "+", "×", "=", "💡", "🔢", "✦"];
+const HERO_PARTICLES = ["✦", "✧", "+", "×", "="];
 
 export default function HeroSectionContainer({
   slide,
@@ -39,12 +58,6 @@ export default function HeroSectionContainer({
       : [];
 
   const [activeIndex, setActiveIndex] = useState(initialSlideIndex);
-  const [motivationIndex, setMotivationIndex] = useState(0);
-
-  // Reset slide index when active lesson changes
-  useEffect(() => {
-    setActiveIndex(0);
-  }, [activeLessonId]);
 
   // Auto-slide every 5 seconds
   useEffect(() => {
@@ -62,12 +75,7 @@ export default function HeroSectionContainer({
 
   if (!currentSlide) return null;
 
-  const hundreds = (currentSlide.visualizerData?.hundreds as number) ?? 1;
-  const tens = (currentSlide.visualizerData?.tens as number) ?? 3;
-  const ones = (currentSlide.visualizerData?.ones as number) ?? 5;
-  const number = (currentSlide.visualizerData?.number as number) ?? (hundreds * 100 + tens * 10 + ones);
-
-  const handleCtaClick = (e: React.MouseEvent) => {
+  const handleCtaClick = () => {
     if (onCtaClick) {
       onCtaClick(currentSlide, activeIndex);
     }
@@ -88,7 +96,7 @@ export default function HeroSectionContainer({
       {/* Floating Particles Layer */}
       <div className="hero-particles-layer">
         {HERO_PARTICLES.map((particle, idx) => (
-          <span key={idx} className="hero-particle">{particle}</span>
+          <span key={idx} className="hero-particle" aria-hidden="true">{particle}</span>
         ))}
       </div>
 
@@ -98,7 +106,8 @@ export default function HeroSectionContainer({
         className="hero-banner-content"
       >
         <div className="hero-tag-ribbon">
-          <span className="star-icon">⭐</span> {currentSlide.tag}
+          <span className="star-icon"><Sparkles size={14} aria-hidden="true" /></span>
+          {currentSlide.tag}
         </div>
 
         <h1 className="hero-title">{currentSlide.title}</h1>
@@ -114,11 +123,11 @@ export default function HeroSectionContainer({
               style={{ textDecoration: "none", display: "inline-flex" }}
               onClick={handleCtaClick}
             >
-              ▶ {currentSlide.ctaText}
+              <Play size={14} aria-hidden="true" /> {currentSlide.ctaText}
             </a>
           ) : (
             <button className="btn-primary-hero" onClick={handleCtaClick}>
-              ▶ {currentSlide.ctaText}
+              <Play size={14} aria-hidden="true" /> {currentSlide.ctaText}
             </button>
           )}
 
@@ -243,13 +252,13 @@ function VisualBadge({
   children,
   className = "",
 }: {
-  icon: string;
-  children: React.ReactNode;
+  icon: ReactNode;
+  children: ReactNode;
   className?: string;
 }) {
   return (
     <div className={`hero-visual-badge ${className}`}>
-      <span>{icon}</span>
+      <span aria-hidden="true">{icon}</span>
       {children}
     </div>
   );
@@ -277,12 +286,12 @@ function PlaceValueVisualizerScene({
       <div className="visual-floating-star star-one">✦</div>
       <div className="visual-floating-star star-two">✦</div>
 
-      <VisualBadge icon="🏆" className="xp-badge">
+      <VisualBadge icon={<Trophy size={15} strokeWidth={1.8} />} className="xp-badge">
         +20 XP
       </VisualBadge>
 
       <div className="visual-main-title">
-        <span>🔢</span>
+        <span className="visual-main-icon"><Calculator size={19} strokeWidth={1.8} aria-hidden="true" /></span>
         Number Quest
       </div>
 
@@ -339,7 +348,7 @@ function PlaceValueVisualizerScene({
         <strong>{number}</strong>
       </div>
 
-      <VisualBadge icon="⭐">
+      <VisualBadge icon={<Star size={15} strokeWidth={1.8} />}>
         Great job!
       </VisualBadge>
 
@@ -356,12 +365,13 @@ function TriangleVisualizerScene() {
   return (
     <div className="gamified-visual geometry-visual">
 
-      <VisualBadge icon="🏆" className="xp-badge">
+      <VisualBadge icon={<Trophy size={15} strokeWidth={1.8} />} className="xp-badge">
         +25 XP
       </VisualBadge>
 
       <div className="visual-main-title">
-        🔺 Shape Explorer
+        <span className="visual-main-icon"><Triangle size={19} strokeWidth={1.8} aria-hidden="true" /></span>
+        Shape Explorer
       </div>
 
       <div className="triangle-stage">
@@ -387,7 +397,7 @@ function TriangleVisualizerScene() {
       </div>
 
       <div className="visual-answer">
-        🔺 3 sides · 3 angles
+        3 sides · 3 angles
       </div>
 
     </div>
@@ -403,12 +413,13 @@ function CircleVisualizerScene() {
   return (
     <div className="gamified-visual geometry-visual">
 
-      <VisualBadge icon="💎" className="xp-badge">
+      <VisualBadge icon={<Gem size={15} strokeWidth={1.8} />} className="xp-badge">
         +20 XP
       </VisualBadge>
 
       <div className="visual-main-title">
-        🟢 Circle Explorer
+        <span className="visual-main-icon"><Circle size={19} strokeWidth={1.8} aria-hidden="true" /></span>
+        Circle Explorer
       </div>
 
       <div className="circle-stage">
@@ -434,7 +445,8 @@ function CircleVisualizerScene() {
       </div>
 
       <div className="visual-answer">
-        🎯 Center + Radius + Diameter
+        <Target size={15} strokeWidth={1.8} aria-hidden="true" />
+        Center + Radius + Diameter
       </div>
 
     </div>
@@ -450,32 +462,34 @@ function SymmetryVisualizerScene() {
   return (
     <div className="gamified-visual symmetry-visual">
 
-      <VisualBadge icon="✨" className="xp-badge">
+      <VisualBadge icon={<Sparkles size={15} strokeWidth={1.8} />} className="xp-badge">
         +30 XP
       </VisualBadge>
 
       <div className="visual-main-title">
-        🪞 Mirror Magic
+        <span className="visual-main-icon"><Copy size={19} strokeWidth={1.8} aria-hidden="true" /></span>
+        Mirror Magic
       </div>
 
       <div className="symmetry-stage">
 
         <div className="symmetry-shape left">
-          <span>♥</span>
+        <span><Heart size={38} strokeWidth={1.7} aria-hidden="true" /></span>
         </div>
 
         <div className="mirror-line">
-          <span>↕</span>
+        <span><MoveVertical size={18} strokeWidth={1.8} aria-hidden="true" /></span>
         </div>
 
         <div className="symmetry-shape right">
-          <span>♥</span>
+        <span><Heart size={38} strokeWidth={1.7} aria-hidden="true" /></span>
         </div>
 
       </div>
 
       <div className="visual-answer">
-        ✨ Perfectly Symmetrical!
+        <Sparkles size={15} strokeWidth={1.8} aria-hidden="true" />
+        Perfectly Symmetrical!
       </div>
 
     </div>
@@ -491,12 +505,13 @@ function FractionsVisualizerScene() {
   return (
     <div className="gamified-visual fraction-visual">
 
-      <VisualBadge icon="🏆" className="xp-badge">
+      <VisualBadge icon={<Trophy size={15} strokeWidth={1.8} />} className="xp-badge">
         +30 XP
       </VisualBadge>
 
       <div className="visual-main-title">
-        🍕 Fraction Quest
+        <span className="visual-main-icon"><Pizza size={19} strokeWidth={1.8} aria-hidden="true" /></span>
+        Fraction Quest
       </div>
 
       <div className="pizza-stage">
@@ -517,7 +532,7 @@ function FractionsVisualizerScene() {
       </div>
 
       <div className="visual-answer">
-        🍕 3 of 4 parts selected
+        3 of 4 parts selected
       </div>
 
     </div>
@@ -533,12 +548,13 @@ function MoneyVisualizerScene() {
   return (
     <div className="gamified-visual money-visual">
 
-      <VisualBadge icon="💰" className="xp-badge">
+      <VisualBadge icon={<Coins size={15} strokeWidth={1.8} />} className="xp-badge">
         +25 XP
       </VisualBadge>
 
       <div className="visual-main-title">
-        💰 Money Mission
+        <span className="visual-main-icon"><Coins size={19} strokeWidth={1.8} aria-hidden="true" /></span>
+        Money Mission
       </div>
 
       <div className="coins-stage">
@@ -566,7 +582,7 @@ function MoneyVisualizerScene() {
       </div>
 
       <div className="visual-answer">
-        💰 Money Master!
+        Money Master!
       </div>
 
     </div>
@@ -582,12 +598,13 @@ function MeasurementVisualizerScene() {
   return (
     <div className="gamified-visual measurement-visual">
 
-      <VisualBadge icon="📏" className="xp-badge">
+      <VisualBadge icon={<Ruler size={15} strokeWidth={1.8} />} className="xp-badge">
         +20 XP
       </VisualBadge>
 
       <div className="visual-main-title">
-        📏 Measure It!
+        <span className="visual-main-icon"><Ruler size={19} strokeWidth={1.8} aria-hidden="true" /></span>
+        Measure It!
       </div>
 
       <div className="ruler-stage">
@@ -606,13 +623,15 @@ function MeasurementVisualizerScene() {
         </div>
 
         <div className="measurement-arrow">
-          ↔ 8 cm
+          <ArrowLeftRight size={16} strokeWidth={1.8} aria-hidden="true" />
+          8 cm
         </div>
 
       </div>
 
       <div className="visual-answer">
-        🎯 Measure like a pro!
+        <Target size={15} strokeWidth={1.8} aria-hidden="true" />
+        Measure like a pro!
       </div>
 
     </div>
@@ -628,12 +647,13 @@ function TimeVisualizerScene() {
   return (
     <div className="gamified-visual time-visual">
 
-      <VisualBadge icon="⏰" className="xp-badge">
+      <VisualBadge icon={<Clock3 size={15} strokeWidth={1.8} />} className="xp-badge">
         +20 XP
       </VisualBadge>
 
       <div className="visual-main-title">
-        ⏰ Time Explorer
+        <span className="visual-main-icon"><Clock3 size={19} strokeWidth={1.8} aria-hidden="true" /></span>
+        Time Explorer
       </div>
 
       <div className="clock-stage">
@@ -668,7 +688,7 @@ function TimeVisualizerScene() {
       </div>
 
       <div className="visual-answer">
-        🕒 It's 3 o'clock!
+        It&apos;s 3 o&apos;clock!
       </div>
 
     </div>

@@ -343,6 +343,15 @@
 }
 .ed-tag.active { background: rgba(16,185,129,.12); color: #059669; }
 .ed-tag.locked { background: rgba(239,68,68,.10);  color: #dc2626; }
+.ed-tag.warn   { background: rgba(245,158,11,.14); color: #b45309; margin-left: 8px; }
+
+.ed-notice {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+  padding: 14px 18px; margin-bottom: 16px; border-radius: 12px;
+  background: rgba(245,158,11,.08); border: 1px solid rgba(245,158,11,.35);
+  font-size: .85rem; color: var(--color-text-secondary);
+}
+.ed-notice strong { display: block; color: #b45309; margin-bottom: 2px; }
 
 .ed-grade-badge {
   display: inline-block; padding: 4px 12px; border-radius: 7px;

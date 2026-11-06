@@ -96,8 +96,66 @@ export default function EduNotesBookViewer({
   const [pdfError, setPdfError] =
     useState<boolean>(false);
 
+  const bookAppRef =
+    useRef<HTMLDivElement>(null);
+
   const flipTimer =
     useRef<number | null>(null);
+
+  useEffect(() => {
+    const bookApp = bookAppRef.current;
+    const handleFullscreenChange = () => {
+      setFullscreen(
+        document.fullscreenElement === bookApp
+      );
+    };
+    const handleFullscreenEscape = (event: KeyboardEvent) => {
+      if (
+        event.key !== "Escape" ||
+        !bookApp ||
+        document.fullscreenElement !== bookApp
+      ) {
+        return;
+      }
+
+      event.preventDefault();
+      void document.exitFullscreen().catch((error: unknown) => {
+        console.error(
+          "EduNotes fullscreen exit error:",
+          error
+        );
+      });
+    };
+
+    document.addEventListener(
+      "fullscreenchange",
+      handleFullscreenChange
+    );
+    document.addEventListener(
+      "keydown",
+      handleFullscreenEscape
+    );
+
+    return () => {
+      document.removeEventListener(
+        "fullscreenchange",
+        handleFullscreenChange
+      );
+      document.removeEventListener(
+        "keydown",
+        handleFullscreenEscape
+      );
+
+      if (bookApp && document.fullscreenElement === bookApp) {
+        void document.exitFullscreen().catch((error: unknown) => {
+          console.error(
+            "EduNotes fullscreen cleanup error:",
+            error
+          );
+        });
+      }
+    };
+  }, []);
 
   /* =========================================================
      RESPONSIVE PAGE WIDTH
@@ -356,17 +414,6 @@ export default function EduNotesBookViewer({
         event.preventDefault();
         previousPage();
       }
-
-      if (
-        event.key === "Escape" &&
-        document.fullscreenElement
-      ) {
-        document
-          .exitFullscreen()
-          .catch(() => { });
-
-        setFullscreen(false);
-      }
     };
 
     window.addEventListener(
@@ -466,21 +513,18 @@ export default function EduNotesBookViewer({
 
   const toggleFullscreen =
     async () => {
+      const bookApp = bookAppRef.current;
+      if (!bookApp) return;
+
       try {
-        if (
-          !document.fullscreenElement
-        ) {
-          await document.documentElement.requestFullscreen();
-
-          setFullscreen(true);
-        } else {
+        if (document.fullscreenElement === bookApp) {
           await document.exitFullscreen();
-
-          setFullscreen(false);
+        } else if (!document.fullscreenElement) {
+          await bookApp.requestFullscreen();
         }
       } catch (error) {
         console.error(
-          "Fullscreen error:",
+          "EduNotes fullscreen error:",
           error
         );
       }
@@ -933,6 +977,7 @@ export default function EduNotesBookViewer({
 
   return (
     <div
+      ref={bookAppRef}
       className={`${styles.bookApp} ${fullscreen
           ? styles.fullscreen
           : ""
@@ -1064,9 +1109,19 @@ export default function EduNotesBookViewer({
             onClick={
               toggleFullscreen
             }
-            title="Fullscreen"
+            title={
+              fullscreen
+                ? "Exit fullscreen"
+                : "Fullscreen"
+            }
+            aria-label={
+              fullscreen
+                ? "Exit fullscreen"
+                : "Enter fullscreen"
+            }
+            aria-pressed={fullscreen}
           >
-            ⛶
+            {fullscreen ? "⊠" : "⛶"}
           </button>
         </div>
       </header>

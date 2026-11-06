@@ -67,6 +67,7 @@ const SEARCH_INDEX: NavItem[] = [
   })),
   { label: "ThinkTales — story-based math", href: "/thinktales", keywords: "stories tales adventures" },
   { label: "IntelliaPlay — math games & challenges", href: "/intelliaplay", keywords: "play games quiz challenges xp streaks badges" },
+  { label: "Pricing & memberships", href: "/pricing", keywords: "price plans membership subscription core plus ultra family buy cost" },
   { label: "Intellia360 For Schools", href: "/schools", keywords: "school program teachers classroom" },
   { label: "Book A Free Demo", href: "/schools#demo", keywords: "demo contact school" },
   { label: "Partner With Us", href: "/schools#partner", keywords: "partnership coaching centre" },
@@ -358,6 +359,12 @@ export default function SiteHeader() {
 
               <Link href="/intelliaplay" className={navLinkClass("/intelliaplay")} aria-current={ariaCurrent("/intelliaplay")}>
                 IntelliaPlay
+              </Link>
+
+              {/* PRICING */}
+
+              <Link href="/pricing" className={navLinkClass("/pricing")} aria-current={ariaCurrent("/pricing")}>
+                Pricing
               </Link>
 
               {/* ==================================================
@@ -654,6 +661,10 @@ export default function SiteHeader() {
 
             <Link href="/intelliaplay" className={mobileLinkClass("/intelliaplay")} aria-current={ariaCurrent("/intelliaplay")} onClick={closePanels}>
               IntelliaPlay
+            </Link>
+
+            <Link href="/pricing" className={mobileLinkClass("/pricing")} aria-current={ariaCurrent("/pricing")} onClick={closePanels}>
+              Pricing
             </Link>
 
             <MobileGroup

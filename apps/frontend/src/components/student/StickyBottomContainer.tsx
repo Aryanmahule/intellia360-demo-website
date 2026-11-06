@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useStudentContext } from "@/context/StudentContext";
 import { apiFetch } from "@/lib/api";
@@ -8,12 +9,15 @@ import { apiFetch } from "@/lib/api";
 interface ChatMessage {
   sender: "bot" | "user";
   text: string;
+  /** The daily question limit was reached: offer the membership page. */
+  upgrade?: boolean;
 }
 
 interface AITutorResponse {
   success?: boolean;
   answer?: string;
   accessAllowed?: boolean;
+  requiresPurchase?: boolean;
   grade?: string;
   lessonId?: string;
   topic?: string;
@@ -152,6 +156,7 @@ export default function StickyBottomContainer() {
         {
           sender: "bot",
           text: data.answer as string,
+          upgrade: data.requiresPurchase === true && data.accessAllowed === false,
         },
       ]);
     } catch (error) {
@@ -332,6 +337,14 @@ export default function StickyBottomContainer() {
                         }`}
                     >
                       {msg.text}
+                      {msg.upgrade && (
+                        <>
+                          {" "}
+                          <Link href="/student/membership" style={{ fontWeight: 700, textDecoration: "underline" }}>
+                            See membership plans →
+                          </Link>
+                        </>
+                      )}
                     </div>
 
                   </div>

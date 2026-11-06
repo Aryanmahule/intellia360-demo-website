@@ -208,8 +208,9 @@ export default function SiteFooter() {
           </p>
 
           <nav className="footer-legal-links" aria-label="Legal">
-            <Link href="/privacy">Privacy Policy</Link>
-            <Link href="/terms">Terms of Service</Link>
+            <Link href="/refund-policy">Refund Policy</Link>
+            <Link href="/terms-and-conditions">Terms &amp; Conditions</Link>
+            <Link href="/privacy-policy">Privacy Policy</Link>
             <Link href="/support">Support</Link>
           </nav>
 

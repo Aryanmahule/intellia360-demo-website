@@ -1,0 +1,495 @@
+/* /student/membership — matches the student portal's card style
+   (white cards, navy #172554 headings, blue #2563eb actions). */
+
+.page {
+  display: grid;
+  gap: 20px;
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 28px 20px 120px;
+  color: #172554;
+}
+
+.head {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.kicker {
+  margin: 0;
+  color: #2563eb;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.title {
+  margin: 6px 0 0;
+  font-size: 28px;
+  font-weight: 850;
+}
+
+.lead {
+  margin: 6px 0 0;
+  color: #64748b;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.lead a {
+  color: #2563eb;
+  font-weight: 700;
+}
+
+.card {
+  display: grid;
+  gap: 16px;
+  padding: 24px;
+  border: 1px solid #e2e8f0;
+  border-radius: 22px;
+  background: #ffffff;
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.05);
+  scroll-margin-top: 90px;
+}
+
+.cardTitle {
+  margin: 0;
+  font-size: 19px;
+  font-weight: 800;
+}
+
+.boxTitle {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.muted {
+  margin: 0;
+  color: #64748b;
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.hint {
+  margin: -6px 0 0;
+  color: #64748b;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.errorText {
+  margin: 4px 0 0;
+  color: #b91c1c;
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.notice {
+  margin: 0;
+  padding: 12px 16px;
+  border-radius: 14px;
+  font-size: 14px;
+  font-weight: 650;
+  line-height: 1.5;
+}
+
+.notice_ok {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.notice_error {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.notice_info {
+  background: #eff6ff;
+  color: #1e40af;
+}
+
+/* Learners */
+
+.learnerList,
+.planList {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.learnerRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1px solid #eef2f7;
+  border-radius: 14px;
+}
+
+.learnerName {
+  flex: 1 1 160px;
+  font-weight: 700;
+}
+
+.badge {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.badgeTier {
+  background: #eef2ff;
+  color: #4338ca;
+}
+
+.badgePlay {
+  background: #f5f3ff;
+  color: #6d28d9;
+}
+
+.badgeMuted {
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+/* Plans */
+
+.planRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid #eef2f7;
+  border-radius: 16px;
+}
+
+.planMain {
+  display: grid;
+  gap: 4px;
+}
+
+.planName {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.planActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.status {
+  margin: 2px 0 0;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.status_good {
+  color: #15803d;
+}
+
+.status_warn {
+  color: #b45309;
+}
+
+.status_muted {
+  color: #64748b;
+}
+
+.changeBox {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 14px;
+  background: #f8fafc;
+}
+
+/* Buy form */
+
+.field {
+  display: grid;
+  gap: 8px;
+}
+
+.fieldRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.label {
+  color: #475569;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.choiceGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.choice {
+  display: grid;
+  gap: 4px;
+  padding: 14px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 14px;
+  background: #ffffff;
+  color: #172554;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.choice strong {
+  font-size: 15px;
+}
+
+.choice small {
+  color: #64748b;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.choiceOn {
+  border-color: #4f46e5;
+  background: #eef2ff;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
+}
+
+.choice:focus-visible,
+.payButton:focus-visible,
+.secondaryButton:focus-visible,
+.linkButton:focus-visible,
+.input:focus-visible,
+.select:focus-visible {
+  outline: 3px solid rgba(37, 99, 235, 0.3);
+  outline-offset: 2px;
+}
+
+.checkList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.check {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 14px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.check input {
+  width: 16px;
+  height: 16px;
+  accent-color: #4f46e5;
+}
+
+.summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px;
+  border-radius: 16px;
+  background: #f8fafc;
+}
+
+.trialLine {
+  margin: 0 0 2px;
+  color: #047857;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.total {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 900;
+}
+
+.total span {
+  color: #64748b;
+  font-size: 15px;
+  font-weight: 650;
+}
+
+.payButton,
+.secondaryButton {
+  min-height: 44px;
+  padding: 0 22px;
+  border-radius: 12px;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.payButton {
+  border: 0;
+  background: linear-gradient(90deg, #1769ff, #4f46e5);
+  color: #ffffff;
+}
+
+.secondaryButton {
+  border: 1px solid #bfdbfe;
+  background: #ffffff;
+  color: #2563eb;
+}
+
+.payButton:disabled,
+.secondaryButton:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.linkButton {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #2563eb;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* Family */
+
+.familyGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.familyBox {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+  padding: 18px;
+  border: 1px solid #eef2f7;
+  border-radius: 16px;
+}
+
+.inline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.input,
+.select {
+  min-height: 44px;
+  padding: 0 12px;
+  border: 1px solid #d6e0ee;
+  border-radius: 12px;
+  background: #ffffff;
+  color: #172554;
+  font: inherit;
+  font-size: 15px;
+}
+
+.input {
+  flex: 1 1 160px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.code {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+}
+
+.code .mono {
+  font-size: 26px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+}
+
+.mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+/* Payments */
+
+.tableWrap {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  min-width: 560px;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.table th,
+.table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #eef2f7;
+  text-align: left;
+}
+
+.table th {
+  color: #475569;
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.table td.mono {
+  font-size: 12px;
+  color: #64748b;
+}
+
+@media (max-width: 860px) {
+  .choiceGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .familyGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .planRow {
+    grid-template-columns: 1fr;
+  }
+
+  .planActions {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 480px) {
+  .page {
+    padding: 20px 14px 120px;
+  }
+
+  .card {
+    padding: 18px;
+  }
+}

@@ -13,6 +13,8 @@ import {
   FolderKanban,
   TrendingUp,
   CreditCard,
+  Crown,
+  IndianRupee,
   FileText,
   Settings,
   ChevronDown,
@@ -29,6 +31,8 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   FolderKanban,
   TrendingUp,
   CreditCard,
+  Crown,
+  IndianRupee,
   FileText,
   Settings,
 };

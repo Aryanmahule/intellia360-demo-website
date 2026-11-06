@@ -1,0 +1,136 @@
+.page {
+  display: grid;
+  gap: 20px;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 28px 20px 120px;
+  color: #172554;
+}
+
+.hero {
+  padding: 28px;
+  border-radius: 24px;
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  color: #ffffff;
+}
+
+.eyebrow {
+  display: inline-block;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.16);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.title {
+  margin: 12px 0 0;
+  font-size: 32px;
+  font-weight: 900;
+}
+
+.lead {
+  margin: 8px 0 0;
+  max-width: 560px;
+  color: rgba(255, 255, 255, 0.88);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.lockCard,
+.openCard {
+  display: grid;
+  gap: 12px;
+  padding: 28px;
+  border: 1px solid #e2e8f0;
+  border-radius: 22px;
+  background: #ffffff;
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.05);
+}
+
+.lockCard {
+  justify-items: center;
+  text-align: center;
+}
+
+.lockIcon,
+.emptyIcon {
+  font-size: 40px;
+}
+
+.cardTitle {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 850;
+}
+
+.muted {
+  margin: 0;
+  color: #64748b;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.muted a {
+  color: #2563eb;
+  font-weight: 700;
+}
+
+.price {
+  margin: 4px 0 0;
+  font-size: 22px;
+  font-weight: 900;
+}
+
+.price span {
+  color: #64748b;
+  font-size: 15px;
+  font-weight: 650;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.primary,
+.secondary {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 20px;
+  border-radius: 12px;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.primary {
+  background: linear-gradient(90deg, #1769ff, #4f46e5);
+  color: #ffffff;
+}
+
+.secondary {
+  border: 1px solid #bfdbfe;
+  color: #2563eb;
+}
+
+.empty {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  padding: 28px 16px;
+  border: 1.5px dashed #cbd5e1;
+  border-radius: 18px;
+  text-align: center;
+}
+
+.emptyTitle {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 800;
+}

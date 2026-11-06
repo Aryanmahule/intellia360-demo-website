@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { LockKeyhole, Star, Trophy } from "lucide-react";
 import { useStudentContext } from "@/context/StudentContext";
 
 interface BottomNavigationContainerProps {
@@ -87,7 +88,9 @@ export default function BottomNavigationContainer({
         {/* Top reward */}
 
         <div className="quest-progress-reward">
-          <span className="quest-trophy">🏆</span>
+          <span className="quest-trophy" aria-hidden="true">
+            <Trophy size={17} strokeWidth={1.8} />
+          </span>
 
           <span>
             {completedCount} / {totalCount} Quests
@@ -111,7 +114,7 @@ export default function BottomNavigationContainer({
           </span>
 
           <span className="quest-path-dot current">
-            ⭐
+            <Star size={13} strokeWidth={1.8} aria-hidden="true" />
           </span>
 
           <span className="quest-path-line dashed">
@@ -119,7 +122,7 @@ export default function BottomNavigationContainer({
           </span>
 
           <span className="quest-path-dot locked">
-            🔒
+            <LockKeyhole size={12} strokeWidth={1.8} aria-hidden="true" />
           </span>
         </div>
 
@@ -153,7 +156,7 @@ export default function BottomNavigationContainer({
           <span className="quest-nav-title">
             {nextTopic
               ? nextTopic.title
-              : "🎉 Adventure Complete!"}
+              : "Adventure Complete!"}
           </span>
         </div>
 

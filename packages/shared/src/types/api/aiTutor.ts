@@ -14,4 +14,6 @@ export interface AiTutorResponse {
   lessonId?: string;
   accessAllowed?: boolean;
   requiresPurchase?: boolean;
+  /** Today's AI Tutor questions against the membership's daily limit (null: no limit). */
+  quota?: { used: number; limit: number | null };
 }

@@ -327,22 +327,101 @@
     letter-spacing: 0.5px;
     margin-bottom: 16px;
 }
+/* 3D BUBBLE TYPOGRAPHY */
 
-.hero-title {
-    font-size: clamp(40px, 4.5vw, 64px);
-    line-height: 1.08;
-    font-weight: 800;
-    color: #0f172a;
-    margin: 0 0 20px 0;
-    letter-spacing: -1px;
+#home-hero-title {
+    font-family: var(--font-hero-display), 'Fredoka', 'Baloo 2', sans-serif !important;
+    font-size: clamp(2.8rem, 5.5vw, 4.9rem) !important;
+    font-weight: 900 !important;
+    line-height: 0.98 !important;
+    letter-spacing: -0.035em !important;
+    color: #142b54 !important;
+    -webkit-text-stroke: 0.35px rgba(10, 31, 72, 0.18);
+    text-shadow:
+        0 2px 0 #d9e5ff,
+        0 4px 0 #c4d5f5,
+        0 6px 0 rgba(25, 55, 105, 0.12),
+        0 10px 16px rgba(20, 43, 84, 0.14) !important;
 }
 
-.hero-title span {
-    color: #2563eb;
+/* MATH — ORANGE 3D BUBBLE */
+
+#home-hero-title > .hero-math-word {
+    display: inline-block;
+    font-family: inherit !important;
+    font-size: 1.02em !important;
+    font-weight: 900 !important;
+    line-height: 1.02 !important;
+    letter-spacing: -0.035em !important;
+    background: linear-gradient(
+        180deg,
+        #fff0a6 0%,
+        #ffc247 20%,
+        #ff9b1b 54%,
+        #f47708 78%,
+        #d95705 100%
+    ) !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    color: transparent !important;
+    -webkit-text-stroke: 0.6px rgba(190, 82, 0, 0.18);
+    filter:
+        drop-shadow(0 2px 0 #d95f05)
+        drop-shadow(0 4px 0 #bd4b08)
+        drop-shadow(0 7px 0 rgba(157, 65, 8, 0.18))
+        drop-shadow(0 10px 9px rgba(234, 116, 15, 0.22)) !important;
+}
+
+/* UNLOCK INTELLIGENCE — PURPLE/BLUE 3D BUBBLE */
+
+#home-hero-title > .hero-unlock-word {
+    display: inline-block;
+    font-family: inherit !important;
+    font-size: 0.78em !important;
+    font-weight: 900 !important;
+    line-height: 1.08 !important;
+    letter-spacing: -0.035em !important;
+    background: linear-gradient(
+        105deg,
+        #e879ff 0%,
+        #a855f7 28%,
+        #6654f5 62%,
+        #2387ff 100%
+    ) !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    color: transparent !important;
+    -webkit-text-stroke: 0.45px rgba(83, 44, 180, 0.16);
+    filter:
+        drop-shadow(0 2px 0 #7540d7)
+        drop-shadow(0 4px 0 #5935bd)
+        drop-shadow(0 7px 0 rgba(62, 49, 160, 0.16))
+        drop-shadow(0 10px 10px rgba(111, 69, 220, 0.20)) !important;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 600px) {
+    #home-hero-title {
+        font-size: clamp(2.15rem, 9vw, 2.85rem) !important;
+        line-height: 1.04 !important;
+        letter-spacing: -0.035em !important;
+    }
+
+    #home-hero-title > .hero-math-word {
+        letter-spacing: -0.03em !important;
+    }
+
+    #home-hero-title > .hero-unlock-word {
+        font-size: 0.76em !important;
+        letter-spacing: -0.03em !important;
+    }
 }
 
 .hero-description {
-    font-size: 18px;
+    font-size: 12px;
     line-height: 1.6;
     color: #475569;
     margin-bottom: 32px;
@@ -8701,26 +8780,33 @@
    INTELLIA360 — HERO SECTION
 ============================================================ */
 
-.home-page .hero-section {
-    position: relative;
-    width: 100%;
-    min-height: 540px;
+.home-page .how-section {
+    background-image:
+        linear-gradient(
+            90deg,
+            rgba(4, 18, 40, 0.30) 0%,
+            rgba(7, 29, 57, 0.20) 38%,
+            rgba(7, 29, 57, 0.16) 68%,
+            rgba(4, 18, 40, 0.28) 100%
+        ),
+        url("/assets/home/math-learning-bg1.png");
 
-    display: flex;
-    align-items: center;
-
-    padding: 35px 0 45px;
-
-    background: #f5f9ff !important;
-
-    overflow: hidden;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
-/* Remove old decorative backgrounds */
-.home-page .hero-section::before,
-.home-page .hero-section::after {
-    display: none !important;
-    content: none !important;
+.home-page .how-section::before {
+    background:
+        radial-gradient(circle at 50% 45%,
+            rgba(59, 130, 246, 0.08),
+            transparent 38%),
+        radial-gradient(circle at 10% 80%,
+            rgba(14, 165, 233, 0.05),
+            transparent 28%),
+        radial-gradient(circle at 90% 25%,
+            rgba(139, 92, 246, 0.06),
+            transparent 28%);
 }
 
 /* ============================================================
@@ -13554,4 +13640,1101 @@
     .home-page .play-home-btn {
         flex: 1 1 100%;
     }
+}
+
+/* ============================================================
+   LEARNING UNIVERSE
+============================================================ */
+
+.home-page .learning-universe-section {
+    isolation: isolate;
+    min-height: 0;
+    padding: 76px 0 84px;
+    overflow: hidden;
+    color: #fff;
+    background:
+        radial-gradient(ellipse at 50% 24%, rgba(83, 103, 255, .3), transparent 36%),
+        radial-gradient(ellipse at 8% 80%, rgba(0, 203, 255, .18), transparent 34%),
+        radial-gradient(ellipse at 94% 70%, rgba(255, 109, 146, .16), transparent 32%),
+        linear-gradient(145deg, #101944 0%, #17265d 48%, #202163 100%);
+}
+
+.home-page .learning-universe-section::before {
+    background:
+        radial-gradient(circle at 18% 20%, rgba(255, 255, 255, .2) 0 1px, transparent 2px),
+        radial-gradient(circle at 73% 15%, rgba(255, 255, 255, .24) 0 1px, transparent 2px),
+        radial-gradient(circle at 86% 44%, rgba(255, 255, 255, .18) 0 1px, transparent 2px),
+        radial-gradient(circle at 32% 56%, rgba(255, 255, 255, .14) 0 1px, transparent 2px),
+        radial-gradient(ellipse at 50% 45%, rgba(52, 85, 194, .18), transparent 62%);
+    background-size: auto, auto, auto, auto, auto;
+}
+
+.home-page .learning-universe-section > .home-container {
+    position: relative;
+    z-index: 2;
+    width: min(1240px, calc(100% - 48px));
+}
+
+.home-page .learning-universe-heading {
+    margin-bottom: 22px;
+}
+
+.home-page .learning-universe-heading .section-eyebrow {
+    margin-bottom: 10px;
+    padding: 7px 13px;
+    color: #d4e1ff;
+    letter-spacing: 1.4px;
+    background: rgba(255, 255, 255, .09);
+    border: 1px solid rgba(255, 255, 255, .16);
+    border-radius: 999px;
+}
+
+.home-page .learning-universe-heading h2 {
+    color: #fff;
+    font-size: clamp(32px, 4vw, 50px);
+    letter-spacing: -1.6px;
+}
+
+.home-page .learning-universe-heading h2 span {
+    color: #ffd467;
+}
+
+.home-page .learning-universe-heading p {
+    margin-top: 12px;
+    color: #d8e4ff;
+    font-size: 16px;
+}
+
+.home-page .learning-universe-scene {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: min(830px, 100%);
+    height: 254px;
+    margin: 0 auto 8px;
+    overflow: hidden;
+    isolation: isolate;
+    perspective: 900px;
+    border-radius: 48% 52% 45% 55% / 46% 42% 58% 54%;
+    background:
+        radial-gradient(ellipse at 50% 88%, rgba(4, 11, 47, .54), transparent 58%),
+        radial-gradient(ellipse at 50% 56%, rgba(84, 129, 255, .22), transparent 52%);
+}
+
+.home-page .learning-universe-scene::before,
+.home-page .learning-universe-scene::after {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.home-page .learning-universe-scene::before {
+    inset: 12% 15%;
+    border: 1px solid rgba(157, 191, 255, .17);
+    box-shadow: 0 0 50px rgba(72, 117, 255, .12), inset 0 0 45px rgba(72, 117, 255, .08);
+    transform: rotateX(62deg) rotateZ(-8deg);
+}
+
+.home-page .learning-universe-scene::after {
+    width: 230px;
+    height: 38px;
+    bottom: 19px;
+    background: rgba(2, 7, 36, .42);
+    filter: blur(15px);
+}
+
+.home-page .universe-mascot {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    place-items: center;
+    width: 224px;
+    height: 224px;
+    transform: translateY(2px);
+    animation: universeMascotFloat 4.8s ease-in-out infinite;
+}
+
+.home-page .universe-mascot img {
+    position: relative;
+    z-index: 1;
+    display: block;
+    width: 194px;
+    height: 208px;
+    object-fit: contain;
+    filter: drop-shadow(0 18px 18px rgba(3, 8, 38, .38));
+}
+
+.home-page .universe-mascot-glow {
+    position: absolute;
+    inset: 22px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(104, 235, 255, .35), rgba(99, 102, 241, .12) 48%, transparent 72%);
+    filter: blur(8px);
+}
+
+.home-page .universe-star,
+.home-page .universe-float,
+.home-page .universe-planet,
+.home-page .universe-xp-badge,
+.home-page .universe-orbit {
+    position: absolute;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.home-page .universe-star {
+    color: #fff3b2;
+    text-shadow: 0 0 15px rgba(255, 225, 135, .85);
+    animation: universeTwinkle 3.2s ease-in-out infinite;
+}
+
+.home-page .universe-star-one {
+    top: 24%;
+    left: 22%;
+    font-size: 23px;
+}
+
+.home-page .universe-star-two {
+    top: 16%;
+    right: 25%;
+    color: #a6f5ff;
+    font-size: 30px;
+    animation-delay: -1.4s;
+}
+
+.home-page .universe-star-three {
+    right: 17%;
+    bottom: 26%;
+    font-size: 16px;
+    animation-delay: -.7s;
+}
+
+.home-page .universe-planet {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    box-shadow: inset -8px -7px 12px rgba(21, 29, 92, .45), 0 9px 18px rgba(5, 11, 43, .25);
+}
+
+.home-page .universe-planet-one {
+    top: 31%;
+    right: 19%;
+    background: radial-gradient(circle at 32% 28%, #ffe69c, #ff9a87 52%, #ed5f91);
+}
+
+.home-page .universe-planet-two {
+    bottom: 23%;
+    left: 19%;
+    width: 30px;
+    height: 30px;
+    background: radial-gradient(circle at 32% 28%, #a8fbff, #3d9bff 56%, #5361d9);
+}
+
+.home-page .universe-orbit {
+    width: 245px;
+    height: 72px;
+    left: 50%;
+    top: 52%;
+    border: 1px solid rgba(157, 203, 255, .4);
+    border-radius: 50%;
+    transform: translate(-50%, -50%) rotate(-18deg);
+}
+
+.home-page .universe-orbit-two {
+    width: 304px;
+    height: 108px;
+    border-color: rgba(183, 163, 255, .22);
+    transform: translate(-50%, -50%) rotate(24deg);
+}
+
+.home-page .universe-float {
+    display: grid;
+    place-items: center;
+    color: #13245b;
+    font-weight: 900;
+    background: linear-gradient(145deg, #fff2ae, #ffbb68);
+    box-shadow: 0 9px 18px rgba(3, 9, 39, .28), inset 0 2px 0 rgba(255, 255, 255, .75);
+}
+
+.home-page .universe-float-book {
+    top: 29%;
+    left: 30%;
+    width: 37px;
+    height: 34px;
+    border-radius: 11px 7px 10px 7px;
+    font-size: 21px;
+    transform: rotate(-13deg);
+}
+
+.home-page .universe-float-spark {
+    right: 30%;
+    bottom: 25%;
+    width: 29px;
+    height: 29px;
+    border-radius: 50%;
+    color: #fff;
+    background: linear-gradient(145deg, #ff91a9, #ff6d8f);
+    font-size: 17px;
+    transform: rotate(13deg);
+}
+
+.home-page .universe-xp-badge {
+    top: 22%;
+    right: 31%;
+    padding: 7px 11px;
+    color: #26316f;
+    font-size: 11px;
+    font-weight: 900;
+    white-space: nowrap;
+    background: linear-gradient(135deg, #fff9cf, #ffd873);
+    border: 1px solid rgba(255, 255, 255, .68);
+    border-radius: 999px;
+    box-shadow: 0 7px 17px rgba(4, 9, 39, .24);
+    transform: rotate(5deg);
+}
+
+.home-page .universe-scene-caption {
+    position: absolute;
+    z-index: 3;
+    bottom: 14px;
+    left: 50%;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 7px 12px;
+    color: #e8f1ff;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .3px;
+    white-space: nowrap;
+    background: rgba(10, 20, 65, .62);
+    border: 1px solid rgba(204, 222, 255, .2);
+    border-radius: 999px;
+    transform: translateX(-50%);
+    backdrop-filter: blur(10px);
+}
+
+.home-page .universe-caption-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #66f0cb;
+    box-shadow: 0 0 10px rgba(102, 240, 203, .8);
+}
+
+.home-page .learning-universe-prompt {
+    margin: 9px 0 18px;
+    color: #c7d7ff;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: .3px;
+    text-align: center;
+}
+
+.home-page .learning-worlds-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 15px;
+}
+
+.home-page .learning-world {
+    --world-accent: #68c9ff;
+    --world-tint: rgba(72, 149, 255, .18);
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-width: 0;
+    min-height: 152px;
+    padding: 18px;
+    overflow: hidden;
+    color: #fff;
+    text-align: left;
+    cursor: pointer;
+    background:
+        radial-gradient(circle at 14% 12%, var(--world-tint), transparent 44%),
+        linear-gradient(145deg, rgba(255, 255, 255, .13), rgba(255, 255, 255, .055));
+    border: 1px solid rgba(214, 228, 255, .2);
+    border-radius: 25px 25px 34px 25px;
+    box-shadow: 0 12px 26px rgba(4, 10, 42, .2), inset 0 1px 0 rgba(255, 255, 255, .09);
+    transition: transform .24s ease, border-color .24s ease, box-shadow .24s ease, background-color .24s ease;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.home-page .learning-world::before {
+    content: "";
+    position: absolute;
+    top: -34px;
+    right: -25px;
+    width: 103px;
+    height: 103px;
+    border: 1px solid color-mix(in srgb, var(--world-accent) 42%, transparent);
+    border-radius: 50%;
+    box-shadow: 0 0 27px var(--world-tint), inset 0 0 18px var(--world-tint);
+    pointer-events: none;
+}
+
+.home-page .learning-world:hover,
+.home-page .learning-world:focus-visible,
+.home-page .learning-world.is-selected {
+    z-index: 1;
+    border-color: color-mix(in srgb, var(--world-accent) 80%, white);
+    box-shadow: 0 18px 35px rgba(3, 9, 39, .3), 0 0 24px var(--world-tint), inset 0 1px 0 rgba(255, 255, 255, .16);
+    transform: translateY(-5px) rotateX(2deg);
+}
+
+.home-page .learning-world:focus-visible {
+    outline: 3px solid #fff;
+    outline-offset: 4px;
+}
+
+.home-page .learning-world-2 {
+    --world-accent: #ffd166;
+    --world-tint: rgba(255, 191, 73, .2);
+}
+
+.home-page .learning-world-3 {
+    --world-accent: #b49aff;
+    --world-tint: rgba(158, 112, 255, .2);
+}
+
+.home-page .learning-world-4 {
+    --world-accent: #ff91b2;
+    --world-tint: rgba(255, 117, 159, .2);
+}
+
+.home-page .learning-world-5 {
+    --world-accent: #67edce;
+    --world-tint: rgba(69, 227, 191, .18);
+}
+
+.home-page .learning-world-6 {
+    --world-accent: #7be5ff;
+    --world-tint: rgba(64, 213, 255, .18);
+}
+
+.home-page .learning-world-art {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    flex: 0 0 70px;
+    place-items: center;
+    width: 70px;
+    height: 70px;
+    isolation: isolate;
+}
+
+.home-page .learning-world-art::before {
+    content: "";
+    position: absolute;
+    inset: 5px;
+    z-index: -1;
+    border: 1px solid color-mix(in srgb, var(--world-accent) 56%, transparent);
+    border-radius: 50%;
+    background: radial-gradient(circle at 33% 24%, color-mix(in srgb, var(--world-accent) 36%, white), var(--world-tint) 48%, rgba(18, 31, 86, .92) 76%);
+    box-shadow: 0 8px 17px rgba(4, 9, 38, .24), inset 0 2px 8px rgba(255, 255, 255, .2);
+}
+
+.home-page .learning-world-symbol {
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    color: #fff;
+    font-size: 24px;
+    font-weight: 900;
+    text-shadow: 0 3px 9px rgba(6, 13, 50, .42);
+    filter: drop-shadow(0 0 7px var(--world-accent));
+}
+
+.home-page .learning-world-6 .learning-world-symbol {
+    font-size: 15px;
+    letter-spacing: -.5px;
+}
+
+.home-page .learning-world-orbit {
+    position: absolute;
+    top: 2px;
+    right: 0;
+    display: grid;
+    place-items: center;
+    width: 24px;
+    height: 24px;
+    color: #162457;
+    font-size: 11px;
+    font-weight: 900;
+    background: linear-gradient(145deg, #fff6c8, var(--world-accent));
+    border: 2px solid rgba(255, 255, 255, .8);
+    border-radius: 50%;
+    box-shadow: 0 4px 10px rgba(3, 9, 39, .28);
+}
+
+.home-page .learning-world-spark {
+    position: absolute;
+    bottom: 4px;
+    left: 1px;
+    color: var(--world-accent);
+    font-size: 14px;
+    text-shadow: 0 0 9px var(--world-accent);
+}
+
+.home-page .learning-world-copy {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.home-page .learning-world-label {
+    margin-bottom: 4px;
+    color: var(--world-accent);
+    font-size: 9px;
+    font-weight: 900;
+    letter-spacing: .95px;
+    line-height: 1.3;
+    text-transform: uppercase;
+}
+
+.home-page .learning-world-title {
+    color: #fff;
+    font-size: 16px;
+    font-weight: 850;
+    line-height: 1.25;
+}
+
+.home-page .learning-world-description {
+    margin-top: 6px;
+    color: #d5e0ff;
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+.home-page .learning-world-arrow {
+    position: absolute;
+    right: 12px;
+    bottom: 10px;
+    color: var(--world-accent);
+    font-size: 15px;
+    opacity: .78;
+    transition: transform .2s ease, opacity .2s ease;
+}
+
+.home-page .learning-world:hover .learning-world-arrow,
+.home-page .learning-world:focus-visible .learning-world-arrow,
+.home-page .learning-world.is-selected .learning-world-arrow {
+    opacity: 1;
+    transform: translate(2px, -2px);
+}
+
+.home-page .learning-world-feedback {
+    min-height: 20px;
+    margin: 15px 0 0;
+    color: #ffdf83;
+    font-size: 12px;
+    font-weight: 800;
+    text-align: center;
+}
+
+.home-page .learning-world-feedback span {
+    margin-right: 4px;
+}
+
+@keyframes universeMascotFloat {
+    0%, 100% {
+        transform: translateY(2px);
+    }
+
+    50% {
+        transform: translateY(-7px);
+    }
+}
+
+@keyframes universeTwinkle {
+    0%, 100% {
+        opacity: .58;
+        transform: scale(.88);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1.08);
+    }
+}
+
+@media (max-width: 1000px) {
+    .home-page .learning-worlds-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 640px) {
+    .home-page .learning-universe-section {
+        padding: 58px 0 64px;
+    }
+
+    .home-page .learning-universe-section > .home-container {
+        width: min(100% - 32px, 520px);
+    }
+
+    .home-page .learning-universe-heading {
+        margin-bottom: 16px;
+    }
+
+    .home-page .learning-universe-heading h2 {
+        font-size: clamp(30px, 8vw, 40px);
+        letter-spacing: -1.1px;
+    }
+
+    .home-page .learning-universe-heading p {
+        max-width: 340px;
+        margin-right: auto;
+        margin-left: auto;
+        font-size: 14px;
+    }
+
+    .home-page .learning-universe-scene {
+        height: 218px;
+        margin-bottom: 4px;
+    }
+
+    .home-page .universe-mascot {
+        width: 190px;
+        height: 190px;
+    }
+
+    .home-page .universe-mascot img {
+        width: 164px;
+        height: 176px;
+    }
+
+    .home-page .universe-orbit-one {
+        width: 205px;
+        height: 62px;
+    }
+
+    .home-page .universe-orbit-two {
+        width: 250px;
+        height: 88px;
+    }
+
+    .home-page .universe-planet-one {
+        right: 11%;
+        width: 34px;
+        height: 34px;
+    }
+
+    .home-page .universe-planet-two {
+        left: 11%;
+        width: 25px;
+        height: 25px;
+    }
+
+    .home-page .universe-star-one {
+        left: 13%;
+    }
+
+    .home-page .universe-star-two {
+        right: 15%;
+    }
+
+    .home-page .universe-star-three {
+        right: 9%;
+    }
+
+    .home-page .universe-float-book {
+        left: 22%;
+        width: 31px;
+        height: 29px;
+        font-size: 18px;
+    }
+
+    .home-page .universe-float-spark {
+        right: 22%;
+        width: 25px;
+        height: 25px;
+        font-size: 14px;
+    }
+
+    .home-page .universe-xp-badge {
+        right: 21%;
+        padding: 6px 8px;
+        font-size: 9px;
+    }
+
+    .home-page .learning-universe-prompt {
+        margin: 8px 0 14px;
+        font-size: 12px;
+    }
+
+    .home-page .learning-worlds-grid {
+        gap: 10px;
+    }
+
+    .home-page .learning-world {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+        min-height: 186px;
+        padding: 13px;
+        border-radius: 20px 20px 26px 20px;
+    }
+
+    .home-page .learning-world-art {
+        flex-basis: 56px;
+        width: 56px;
+        height: 56px;
+    }
+
+    .home-page .learning-world-art::before {
+        inset: 4px;
+    }
+
+    .home-page .learning-world-symbol {
+        font-size: 20px;
+    }
+
+    .home-page .learning-world-title {
+        font-size: 14px;
+    }
+
+    .home-page .learning-world-description {
+        font-size: 10px;
+        line-height: 1.45;
+    }
+
+    .home-page .learning-world-label {
+        font-size: 8px;
+    }
+}
+
+@media (max-width: 360px) {
+    .home-page .learning-worlds-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .home-page .learning-world {
+        flex-direction: row;
+        align-items: center;
+        min-height: 136px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .home-page .universe-star,
+    .home-page .universe-mascot {
+        animation: none;
+    }
+
+    .home-page .learning-world,
+    .home-page .learning-world-arrow {
+        transition: none;
+    }
+}
+
+#home-hero-title {
+    font-family: var(--font-hero-display), var(--font-inter), sans-serif !important;
+    font-size: clamp(2.25rem, 5vw, 4.25rem) !important;
+    font-weight: 900 !important;
+    line-height: 1.06 !important;
+    letter-spacing: -0.045em !important;
+    color: #142b54 !important;
+    -webkit-text-stroke: 0.35px rgba(10, 31, 72, 0.18) !important;
+    text-shadow:
+        0 2px 0 #d9e5ff,
+        0 4px 0 #c4d5f5,
+        0 6px 0 rgba(25, 55, 105, 0.12),
+        0 10px 16px rgba(20, 43, 84, 0.14) !important;
+}
+
+#home-hero-title > .hero-understand-line {
+    display: block !important;
+    white-space: nowrap !important;
+    background: none !important;
+    -webkit-background-clip: border-box !important;
+    background-clip: border-box !important;
+    -webkit-text-fill-color: #142b54 !important;
+    color: #142b54 !important;
+}
+
+#home-hero-title .hero-math-word {
+    font-family: inherit !important;
+    font-size: 1em !important;
+    font-weight: 900 !important;
+    line-height: inherit !important;
+    letter-spacing: -0.04em !important;
+    background: linear-gradient(105deg, #f97316 5%, #fb923c 48%, #fbbf24 100%) !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    color: transparent !important;
+    -webkit-text-stroke: 0.6px rgba(190, 82, 0, 0.18) !important;
+    filter:
+        drop-shadow(0 2px 0 #d95f05)
+        drop-shadow(0 4px 0 #bd4b08)
+        drop-shadow(0 7px 0 rgba(157, 65, 8, 0.18))
+        drop-shadow(0 10px 9px rgba(234, 116, 15, 0.22)) !important;
+}
+
+#home-hero-title > .hero-unlock-word {
+    display: block !important;
+    font-family: inherit !important;
+    font-size: 0.78em !important;
+    font-weight: 800 !important;
+    line-height: 1.08 !important;
+    letter-spacing: -0.035em !important;
+    background: linear-gradient(100deg, #7c3aed 0%, #5b4bfa 52%, #2563eb 100%) !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    color: transparent !important;
+    -webkit-text-stroke: 0.45px rgba(83, 44, 180, 0.16) !important;
+    filter:
+        drop-shadow(0 2px 0 #7540d7)
+        drop-shadow(0 4px 0 #5935bd)
+        drop-shadow(0 7px 0 rgba(62, 49, 160, 0.16))
+        drop-shadow(0 10px 10px rgba(111, 69, 220, 0.2)) !important;
+}
+
+@media (max-width: 600px) {
+    #home-hero-title {
+        font-size: clamp(1.7rem, 8.5vw, 2.65rem) !important;
+        line-height: 1.08 !important;
+        letter-spacing: -0.04em !important;
+    }
+
+    #home-hero-title .hero-math-word {
+        letter-spacing: -0.03em !important;
+    }
+
+    #home-hero-title > .hero-unlock-word {
+        letter-spacing: -0.03em !important;
+    }
+}
+
+/* Homepage Adventureverse hero */
+.home-page .hero-section {
+    isolation: isolate !important;
+    background:
+        linear-gradient(90deg, rgba(5, 10, 35, .76) 0%, rgba(7, 12, 42, .58) 48%, rgba(8, 12, 42, .28) 100%),
+        linear-gradient(180deg, rgba(5, 10, 32, .12), rgba(6, 9, 33, .38)),
+        url("/assets/home/adventureverse-galaxy-bg.png") center 56% / cover no-repeat,
+        #080d2c !important;
+}
+
+.home-page .hero-section::before {
+    inset: 0 !important;
+    width: auto !important;
+    height: auto !important;
+    border-radius: 0 !important;
+    background:
+        radial-gradient(circle at 16% 28%, rgba(64, 154, 255, .18), transparent 30%),
+        radial-gradient(circle at 76% 18%, rgba(148, 77, 255, .16), transparent 32%) !important;
+    filter: none !important;
+    pointer-events: none !important;
+}
+
+.home-page .hero-section::after {
+    content: none !important;
+}
+
+.home-page .hero-section .home-container,
+.home-page .hero-grid,
+.home-page .hero-content {
+    position: relative !important;
+}
+
+.home-page .hero-content {
+    z-index: 4 !important;
+}
+
+.home-page .hero-eyebrow {
+    border-color: rgba(144, 192, 255, .34) !important;
+    background: rgba(12, 24, 66, .72) !important;
+    color: #d7eaff !important;
+    box-shadow: 0 0 22px rgba(67, 151, 255, .16) !important;
+    backdrop-filter: blur(10px) !important;
+}
+
+.home-page .hero-content .hero-description {
+    color: #e0e9ff !important;
+    text-shadow: 0 2px 12px rgba(0, 0, 20, .5) !important;
+}
+
+.home-page .hero-actions .hero-primary {
+    border-color: rgba(153, 183, 255, .5) !important;
+    background: linear-gradient(110deg, #2563eb 0%, #6545e8 55%, #913bea 100%) !important;
+    box-shadow: 0 12px 30px rgba(71, 79, 255, .35), 0 0 24px rgba(91, 135, 255, .2) !important;
+}
+
+.home-page .hero-actions .hero-primary:hover {
+    box-shadow: 0 16px 34px rgba(88, 85, 255, .45), 0 0 28px rgba(91, 135, 255, .28) !important;
+}
+
+.home-page .hero-actions .hero-secondary {
+    border-color: rgba(255, 255, 255, .86) !important;
+    background: #fff !important;
+    color: #234aab !important;
+}
+
+.home-page .hero-gamification-strip {
+    border-color: rgba(135, 178, 255, .3) !important;
+    background: rgba(8, 17, 52, .68) !important;
+    box-shadow: 0 14px 36px rgba(0, 0, 15, .26), inset 0 1px rgba(255, 255, 255, .06) !important;
+    backdrop-filter: blur(14px) !important;
+}
+
+.home-page .hero-game-stat strong {
+    color: #f3f6ff !important;
+}
+
+.home-page .hero-game-stat small {
+    color: #b7c8e8 !important;
+}
+
+.home-page .hero-game-divider {
+    background: rgba(176, 199, 240, .24) !important;
+}
+
+#home-hero-title {
+    position: relative !important;
+    width: fit-content !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    color: #fff !important;
+    font-family: var(--font-hero-display), var(--font-inter), system-ui, sans-serif !important;
+    font-size: clamp(2.4rem, 4.25vw, 4rem) !important;
+    font-weight: 800 !important;
+    line-height: 1.08 !important;
+    letter-spacing: -.052em !important;
+    -webkit-text-stroke: 0 !important;
+    text-shadow: none !important;
+}
+
+#home-hero-title > .hero-understand-line,
+#home-hero-title > .hero-unlock-line {
+    display: block !important;
+    width: max-content !important;
+    max-width: 100% !important;
+    white-space: nowrap !important;
+    font: inherit !important;
+    letter-spacing: inherit !important;
+}
+
+#home-hero-title > .hero-understand-line {
+    background: linear-gradient(180deg, #fff 0%, #e8f7ff 42%, #8bd6ff 100%) !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    color: transparent !important;
+    -webkit-text-stroke: 1.1px #1657a8 !important;
+    paint-order: stroke fill;
+    filter: drop-shadow(0 2px 0 #2874cb) drop-shadow(0 5px 0 #124b9a)
+        drop-shadow(0 9px 16px rgba(0, 4, 30, .58)) drop-shadow(0 0 18px rgba(105, 194, 255, .34)) !important;
+}
+
+#home-hero-title .hero-math-wrap {
+    position: relative !important;
+    display: inline-block !important;
+}
+
+#home-hero-title .hero-math-word {
+    display: inline-block !important;
+    font: inherit !important;
+    letter-spacing: inherit !important;
+    background: linear-gradient(180deg, #fff0a8 0%, #ffc04a 38%, #ff8a19 76%, #f05e13 100%) !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    color: transparent !important;
+    -webkit-text-stroke: 1px rgba(191, 76, 4, .9) !important;
+    paint-order: stroke fill;
+    filter: drop-shadow(0 2px 0 #df6707) drop-shadow(0 5px 0 #b94b09)
+        drop-shadow(0 8px 14px rgba(216, 92, 0, .28)) drop-shadow(0 0 17px rgba(255, 169, 40, .28)) !important;
+}
+
+#home-hero-title .hero-math-crown {
+    position: absolute !important;
+    z-index: 2 !important;
+    top: -.56em !important;
+    left: 50% !important;
+    color: #ffd86a !important;
+    font-family: Georgia, serif !important;
+    font-size: .36em !important;
+    line-height: 1 !important;
+    text-shadow: 0 1px 0 #b66b10, 0 0 12px rgba(255, 197, 62, .76) !important;
+    transform: translateX(-50%) rotate(-7deg) !important;
+    animation: hero-crown-float 3.8s ease-in-out infinite !important;
+    -webkit-text-fill-color: #ffd86a !important;
+}
+
+#home-hero-title .hero-unlock-word {
+    display: inline !important;
+    font: inherit !important;
+    letter-spacing: inherit !important;
+    background: linear-gradient(105deg, #f3c7ff 0%, #e17aff 40%, #bd43fa 75%, #f053e6 100%) !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    color: transparent !important;
+    -webkit-text-stroke: 1px rgba(104, 45, 181, .95) !important;
+    paint-order: stroke fill;
+    filter: drop-shadow(0 2px 0 #9147d6) drop-shadow(0 5px 0 #6331b2)
+        drop-shadow(0 8px 14px rgba(64, 19, 130, .45)) drop-shadow(0 0 16px rgba(205, 91, 255, .28)) !important;
+}
+
+#home-hero-title .hero-intelligence-word {
+    position: relative !important;
+    display: inline !important;
+    font: inherit !important;
+    letter-spacing: inherit !important;
+    background: linear-gradient(180deg, #dcffff 0%, #80efff 38%, #32c6ff 70%, #3484ff 100%) !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    color: transparent !important;
+    -webkit-text-stroke: 1px rgba(17, 81, 174, .96) !important;
+    paint-order: stroke fill;
+    filter: drop-shadow(0 2px 0 #318be0) drop-shadow(0 5px 0 #1455a9)
+        drop-shadow(0 8px 14px rgba(0, 13, 61, .48)) drop-shadow(0 0 18px rgba(48, 204, 255, .3)) !important;
+}
+
+#home-hero-title .hero-intelligence-word::after {
+    content: "✦" !important;
+    position: absolute !important;
+    top: -.2em !important;
+    right: -.48em !important;
+    color: #b9f5ff !important;
+    font-size: .35em !important;
+    -webkit-text-fill-color: #b9f5ff !important;
+    text-shadow: 0 0 12px #42caff !important;
+}
+
+#home-hero-title::after {
+    content: "" !important;
+    position: absolute !important;
+    right: 7% !important;
+    bottom: -.14em !important;
+    width: 76% !important;
+    height: .11em !important;
+    border-bottom: 3px solid #6c64ff !important;
+    border-radius: 50% !important;
+    box-shadow: 0 4px 10px rgba(124, 92, 255, .68), 0 0 16px rgba(63, 193, 255, .56) !important;
+    transform: rotate(-1.3deg) !important;
+    pointer-events: none !important;
+}
+
+.home-page .hero-content::before,
+.home-page .hero-content::after {
+    position: absolute !important;
+    z-index: 1 !important;
+    color: #d6e8ff !important;
+    font-size: 19px !important;
+    line-height: 1 !important;
+    text-shadow: 0 0 12px #66bfff, 0 0 24px rgba(111, 92, 255, .75) !important;
+    pointer-events: none !important;
+    animation: hero-star-float 4s ease-in-out infinite !important;
+}
+
+.home-page .hero-content::before {
+    content: "✦" !important;
+    top: 9% !important;
+    right: 5% !important;
+}
+
+.home-page .hero-content::after {
+    content: "✧" !important;
+    top: 43% !important;
+    right: -3% !important;
+    color: #ffc96a !important;
+    font-size: 14px !important;
+    animation-delay: -1.7s !important;
+}
+
+@keyframes hero-star-float {
+    0%, 100% { transform: translateY(0) scale(1); opacity: .75; }
+    50% { transform: translateY(-7px) scale(1.12); opacity: 1; }
+}
+
+@keyframes hero-crown-float {
+    0%, 100% { transform: translate(-50%, 0) rotate(-7deg); }
+    50% { transform: translate(-50%, -4px) rotate(-3deg); }
+}
+
+@media (max-width: 1100px) and (min-width: 901px) {
+    #home-hero-title {
+        font-size: clamp(2.2rem, 4.1vw, 3.25rem) !important;
+    }
+
+    .home-page .hero-grid {
+        gap: 30px !important;
+    }
+}
+
+@media (max-width: 900px) {
+    .home-page .hero-section {
+        background-position: 58% center !important;
+        background-image:
+            linear-gradient(180deg, rgba(5, 10, 35, .72), rgba(7, 12, 42, .63)),
+            url("/assets/home/adventureverse-galaxy-bg.png") !important;
+        background-size: cover !important;
+        background-repeat: no-repeat !important;
+    }
+
+    #home-hero-title {
+        font-size: clamp(2.15rem, 6.7vw, 3.8rem) !important;
+    }
+
+    .home-page .hero-content::before {
+        right: 2% !important;
+    }
+}
+
+@media (max-width: 620px) {
+    .home-page .hero-section {
+        background-position: 60% center !important;
+    }
+
+    #home-hero-title {
+        font-size: clamp(1.45rem, 7.7vw, 2.7rem) !important;
+        line-height: 1.15 !important;
+        letter-spacing: -.055em !important;
+    }
+
+    .home-page .hero-content::before {
+        top: 7% !important;
+        right: 1% !important;
+        font-size: 15px !important;
+    }
+
+    .home-page .hero-content::after {
+        right: -1% !important;
+        top: 37% !important;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #home-hero-title .hero-math-crown,
+    .home-page .hero-content::before,
+    .home-page .hero-content::after {
+        animation: none !important;
+    }
+}
+/* How Intellia360 Works — White Typography */
+.home-page .how-heading h2 {
+    color: #ffffff !important;
+    font-size: calc(34px + 3px);
+}
+
+.home-page .how-heading p {
+    color: #ffffff !important;
+    font-size: calc(16px + 3px);
+}
+
+.home-page .how-heading .section-eyebrow {
+    color: #ffffff !important;
+    font-size: calc(12px + 2px);
 }

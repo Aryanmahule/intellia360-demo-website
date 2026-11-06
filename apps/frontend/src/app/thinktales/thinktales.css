@@ -201,9 +201,12 @@
 }
 
 .thinktales-hero-content h1 span {
-    background: linear-gradient(135deg, #1268ee 0%, #7c3aed 100%);
-
-    -webkit-text-fill-color: transparent;
+    background: none !important;
+    background-color: transparent !important;
+    background-clip: border-box !important;
+    -webkit-background-clip: border-box !important;
+    color: #6d28d9 !important;
+    -webkit-text-fill-color: #6d28d9 !important;
 }
 
 .thinktales-hero-content p {
@@ -249,7 +252,7 @@
     font-size: 16px;
     font-weight: 700;
     color: #1e293b;
-    background: #f1f5f9;
+    background: #6f92b4;
     border: 1px solid #cbd5e1;
     border-radius: 12px;
     transition: all 0.2s ease;
@@ -277,7 +280,7 @@
 .stat-number {
     font-size: 24px;
     font-weight: 800;
-    color: #0f172a;
+    color: #f3f5fa;
 }
 
 .stat-label {
@@ -1172,7 +1175,7 @@
     padding: 14px 30px;
     font-size: 15px;
     font-weight: 700;
-    background: #ffffff;
+    background: #463e80;
     color: var(--primary);
     border-radius: 12px;
     transition: all 0.2s ease;
@@ -1425,4 +1428,64 @@
     .cta-banner-box {
         padding: 40px 20px;
     }
+}
+
+.thinktales-hero-visual {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.thinktales-story-image {
+    width: 100%;
+    max-width: 650px;
+    height: auto;
+    object-fit: contain;
+    display: block;
+    border-radius: 24px;
+    filter: drop-shadow(0 20px 35px rgba(48, 45, 120, 0.18));
+}
+
+@media (max-width: 768px) {
+    .thinktales-story-image {
+        max-width: 100%;
+        border-radius: 18px;
+    }
+}
+
+/* ThinkTales Dark Hero Theme */
+.thinktales-hero {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(
+      circle at 75% 45%,
+      rgba(104, 72, 210, 0.28),
+      transparent 38%
+    ),
+    radial-gradient(
+      circle at 15% 15%,
+      rgba(35, 120, 220, 0.20),
+      transparent 35%
+    ),
+    linear-gradient(135deg, #080d25 0%, #15102f 55%, #211342 100%);
+  color: #ffffff;
+}
+
+.thinktales-hero h1,
+.thinktales-hero h2 {
+  color: #ffffff;
+}
+
+.thinktales-hero p {
+  color: #d1d5f0;
+}
+
+.thinktales-hero .thinktales-story-image {
+  filter: drop-shadow(0 20px 35px rgba(0, 0, 0, 0.35));
+}
+.thinktales-hero .thinktales-btn-secondary {
+  color: #000000 !important;
 }

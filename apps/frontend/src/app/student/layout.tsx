@@ -7,6 +7,7 @@ import StickyBottomContainer from "@/components/student/StickyBottomContainer";
 import SessionGuard from "@/components/auth/SessionGuard";
 import { StudentProvider } from "@/context/StudentContext";
 import "@/styles/layout.css";
+import "@/styles/student-sidebar.css";
 
 export default function StudentLayout({
   children,

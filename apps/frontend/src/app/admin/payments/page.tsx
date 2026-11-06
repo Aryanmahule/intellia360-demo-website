@@ -6,7 +6,7 @@ import ReusableTable, {
   ColumnDef,
 } from "@/components/admin/ReusableTable";
 import ChartCard from "@/components/admin/ChartCard";
-import { fetchPayments, createPayment, PaymentRow } from "@/data/admin/tables";
+import { fetchPayments, createPayment, refundPayment, PaymentRow } from "@/data/admin/tables";
 import {
   IndianRupee,
   CreditCard,
@@ -23,6 +23,9 @@ type Payment = {
   date: string;
   method: string;
   status: "Completed" | "Pending" | "Refunded";
+  amountLabel: string;
+  inrLabel: string | null;
+  refundable: boolean;
 };
 
 function toPayment(row: PaymentRow): Payment {
@@ -157,9 +160,15 @@ export default function AdminPaymentsPage() {
     {
       header: "Amount",
       accessor: (row) => (
-        <span className="font-bold text-slate-900">
-          ₹{Number(row.amount || 0).toLocaleString("en-IN")}
-        </span>
+        <div>
+          <span className="font-bold text-slate-900">
+            {row.status === "Refunded" ? "−" : ""}
+            {row.amountLabel}
+          </span>
+          {row.inrLabel && (
+            <div className="text-xs text-slate-500">{row.inrLabel}</div>
+          )}
+        </div>
       ),
     },
 
@@ -190,7 +199,39 @@ export default function AdminPaymentsPage() {
         );
       },
     },
+
+    {
+      header: "Actions",
+      accessor: (row) =>
+        row.refundable ? (
+          <button
+            type="button"
+            className="text-xs font-bold text-red-600 hover:underline"
+            onClick={() => void handleRefund(row)}
+          >
+            Refund
+          </button>
+        ) : (
+          <span className="text-xs text-slate-400">—</span>
+        ),
+    },
   ];
+
+  /* =========================
+     REFUND (Razorpay payments)
+  ========================= */
+
+  const handleRefund = async (row: Payment) => {
+    const ok = window.confirm(
+      `Refund ${row.amountLabel} to ${row.payerName} in full?
+
+The money goes back through Razorpay and the access this payment bought ends now. This cannot be undone.`
+    );
+    if (!ok) return;
+    const result = await refundPayment(row.id);
+    window.alert(result.message);
+    if (result.success) loadPayments();
+  };
 
   /* =========================
      GENERATE INVOICE

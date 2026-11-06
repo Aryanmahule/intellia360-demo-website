@@ -2417,3 +2417,542 @@
 .student-sidebar-container.is-collapsed .student-sidebar-topic-list {
     display: none;
 }
+/* ==================================================
+   COURSES HERO — 3D LEARNING UNIVERSE
+================================================== */
+
+.courses-hero {
+    position: relative;
+    padding: 55px 0 65px;
+    min-height: 650px;
+    display: flex;
+    align-items: center;
+    background:
+        radial-gradient(circle at 85% 30%, rgba(90, 160, 255, 0.25), transparent 35%),
+        linear-gradient(115deg, #eaf1ff 0%, #dce9ff 48%, #e8ddff 100%);
+    overflow: hidden;
+}
+
+.courses-hero-grid {
+    grid-template-columns: 0.95fr 1.15fr;
+    gap: 25px;
+    align-items: center;
+}
+
+.courses-hero-content {
+    position: relative;
+    z-index: 2;
+}
+
+.courses-hero-visual {
+    min-height: 520px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.courses-hero-image {
+    display: block;
+    width: 100%;
+    max-width: 760px;
+    height: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 22px 30px rgba(65, 75, 160, 0.13));
+    animation: courseImageFloat 5s ease-in-out infinite;
+}
+
+@keyframes courseImageFloat {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+/* TABLET */
+@media (max-width: 900px) {
+    .courses-hero-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .courses-hero-visual {
+        min-height: 350px;
+    }
+
+    .courses-hero-image {
+        max-width: 580px;
+    }
+}
+
+/* MOBILE */
+@media (max-width: 650px) {
+    .courses-hero {
+        padding: 45px 0;
+    }
+
+    .courses-hero-visual {
+        min-height: auto;
+    }
+
+    .courses-hero-image {
+        max-width: 100%;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .courses-hero-image {
+        animation: none;
+    }
+}
+.courses-hero {
+    position: relative;
+    padding: 55px 0 65px;
+    min-height: 650px;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+
+    background:
+        radial-gradient(
+            ellipse at 5% 20%,
+            rgba(255, 255, 255, 0.85) 0%,
+            transparent 35%
+        ),
+        radial-gradient(
+            ellipse at 90% 15%,
+            rgba(83, 169, 255, 0.48) 0%,
+            transparent 38%
+        ),
+        radial-gradient(
+            ellipse at 50% 100%,
+            rgba(190, 163, 255, 0.48) 0%,
+            transparent 48%
+        ),
+        linear-gradient(
+            120deg,
+            #b9d5ff 0%,
+            #d7e5ff 40%,
+            #e4d9ff 75%,
+            #c9dcff 100%
+        );
+}
+
+/* =========================================================
+   INTELLIA360 - RESPONSIVE MOBILE & TABLET IMPROVEMENTS
+   ========================================================= */
+
+/* Prevent horizontal overflow */
+.courses-page {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: clip;
+}
+
+.courses-page *,
+.courses-page *::before,
+.courses-page *::after {
+    box-sizing: border-box;
+}
+
+.courses-container {
+    width: min(1180px, calc(100% - 40px));
+}
+
+/* Tablet */
+@media (max-width: 900px) {
+    .courses-container {
+        width: calc(100% - 36px);
+    }
+
+    .courses-hero-grid {
+        grid-template-columns: 1fr;
+        gap: 35px;
+        text-align: center;
+    }
+
+    .courses-hero-content {
+        max-width: 100%;
+    }
+
+    .courses-hero-content > p {
+        margin-inline: auto;
+    }
+
+    .courses-hero-buttons {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .courses-hero-visual {
+        width: 100%;
+        min-height: 320px;
+    }
+
+    .grade-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .features-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 28px;
+    }
+
+    .courses-cta > .courses-container {
+        flex-wrap: wrap;
+        gap: 25px;
+    }
+}
+
+/* Mobile */
+@media (max-width: 650px) {
+    .courses-container {
+        width: calc(100% - 32px);
+    }
+
+    /* Header */
+    .courses-header {
+        height: 64px;
+    }
+
+    .courses-header .courses-container {
+        gap: 10px;
+    }
+
+    .courses-logo img {
+        width: 85px;
+        max-width: 100%;
+    }
+
+    .courses-actions {
+        gap: 7px;
+    }
+
+    .login-btn,
+    .signup-btn {
+        min-height: 36px;
+        padding: 0 12px;
+        font-size: 11px;
+    }
+
+    /* Hero */
+    .courses-hero {
+        padding: 45px 0 50px;
+    }
+
+    .courses-hero-grid {
+        gap: 25px;
+    }
+
+    .courses-eyebrow {
+        max-width: 100%;
+        font-size: 9px;
+        letter-spacing: .5px;
+        padding: 7px 10px;
+    }
+
+    .courses-hero h1 {
+        font-size: clamp(32px, 9vw, 42px);
+        line-height: 1.12;
+        letter-spacing: -1.5px;
+        margin: 16px 0;
+    }
+
+    .courses-hero-content > p {
+        font-size: 14px;
+        line-height: 1.65;
+    }
+
+    .courses-hero-buttons {
+        flex-direction: column;
+        width: 100%;
+        gap: 12px;
+    }
+
+    .primary-course-btn,
+    .secondary-course-btn {
+        width: 100%;
+        min-height: 46px;
+        padding: 0 14px;
+    }
+
+    /* Hero visual */
+    .courses-hero-visual {
+        min-height: 250px;
+        overflow: hidden;
+    }
+
+    .course-emoji-card {
+        width: min(200px, 65vw);
+        height: min(200px, 65vw);
+        border-radius: 35px;
+        font-size: 75px;
+    }
+
+    .floating-course-card {
+        max-width: 44%;
+        padding: 8px 10px;
+        font-size: 9px;
+        gap: 6px;
+    }
+
+    .card-one {
+        left: 0;
+        top: 15px;
+    }
+
+    .card-two {
+        right: 0;
+        top: 85px;
+    }
+
+    .card-three {
+        left: 0;
+        bottom: 10px;
+    }
+
+    /* Course sections */
+    .course-selection,
+    .grade-section {
+        padding: 48px 0;
+    }
+
+    .section-heading {
+        margin-bottom: 28px;
+        padding-inline: 5px;
+    }
+
+    .section-heading h2,
+    .grade-section .section-heading h2 {
+        font-size: clamp(27px, 7vw, 34px);
+        line-height: 1.2;
+        letter-spacing: -1px;
+    }
+
+    .section-heading p,
+    .grade-section .section-heading p {
+        font-size: 13px;
+        line-height: 1.6;
+    }
+
+    /* Grade cards */
+    .grade-carousel {
+        padding: 0 25px;
+    }
+
+    .grade-grid {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 16px;
+    }
+
+    .grade-card {
+        width: 100%;
+        min-width: 0;
+        min-height: 0;
+        border-radius: 18px;
+    }
+
+    .grade-card-top {
+        height: 140px;
+        min-height: 140px;
+    }
+
+    .grade-circle {
+        width: 82px;
+        height: 82px;
+    }
+
+    .grade-circle strong {
+        font-size: 25px;
+    }
+
+    .grade-content {
+        padding: 17px 16px;
+    }
+
+    .grade-content h3 {
+        font-size: 17px;
+    }
+
+    .grade-description {
+        font-size: 12px;
+    }
+
+    .grade-btn {
+        min-height: 42px;
+        font-size: 12px;
+    }
+
+    .grade-carousel-arrow {
+        width: 32px;
+        height: 32px;
+        font-size: 14px;
+    }
+
+    .grade-carousel-bottom {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    /* Features */
+    .features-section {
+        padding: 50px 0;
+    }
+
+    .features-grid {
+        grid-template-columns: 1fr;
+        gap: 22px;
+    }
+
+    .features-section .feature-item {
+        min-height: auto;
+        padding: 12px;
+    }
+
+    .features-section .feature-content h3 {
+        font-size: 16px;
+    }
+
+    .features-section .feature-content p {
+        font-size: 13px;
+    }
+
+    /* CTA */
+    .courses-cta {
+        padding: 40px 0;
+    }
+
+    .courses-cta > .courses-container {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 28px 22px;
+        gap: 20px;
+        border-radius: 20px;
+    }
+
+    .courses-cta h2 {
+        font-size: clamp(24px, 7vw, 30px);
+        line-height: 1.2;
+    }
+
+    .courses-cta p {
+        font-size: 13px;
+        line-height: 1.6;
+    }
+
+    .cta-course-btn {
+        width: 100%;
+        min-height: 46px;
+    }
+
+    /* Footer */
+    .site-footer {
+        padding: 45px 16px 20px;
+    }
+
+    .footer-logo-image {
+        width: 145px;
+    }
+
+    .footer-nav {
+        flex-direction: column;
+        gap: 14px;
+    }
+
+    .footer-nav a {
+        font-size: 13px;
+    }
+
+    .footer-social {
+        gap: 22px;
+        margin-top: 25px;
+    }
+
+    .footer-address {
+        flex-direction: column;
+        gap: 8px;
+        font-size: 12px;
+        overflow-wrap: anywhere;
+    }
+
+    .footer-address span + span::before {
+        display: none;
+    }
+
+    .footer-cta {
+        margin-top: 35px;
+    }
+
+    .footer-cta h2 {
+        font-size: clamp(25px, 7vw, 32px);
+    }
+
+    .footer-cta-box {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+        padding: 16px;
+        border-radius: 20px;
+    }
+
+    .footer-cta-box p {
+        text-align: center;
+        font-size: 12px;
+    }
+
+    .footer-cta-button {
+        width: 100%;
+    }
+
+    .footer-copyright {
+        margin-top: 30px;
+    }
+
+    .footer-copyright p {
+        font-size: 11px;
+        line-height: 1.5;
+    }
+}
+
+/* Very small mobile */
+@media (max-width: 380px) {
+    .courses-container {
+        width: calc(100% - 24px);
+    }
+
+    .courses-actions .signup-btn {
+        display: none;
+    }
+
+    .courses-hero h1 {
+        font-size: 32px;
+    }
+
+    .grade-carousel {
+        padding: 0 22px;
+    }
+
+    .grade-content {
+        padding: 15px 13px;
+    }
+
+    .floating-course-card {
+        font-size: 8px;
+        padding: 7px;
+    }
+
+    .footer-logo-image {
+        width: 130px;
+    }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+    .courses-page *,
+    .courses-page *::before,
+    .courses-page *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+    }
+}

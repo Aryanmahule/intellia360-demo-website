@@ -780,6 +780,25 @@ export default function AdaptiveDashboard() {
             </div>
           </div>
 
+          {data.recommendationsLocked && (
+            <section className={styles.section} aria-labelledby="recs-locked-heading">
+              <div className={styles.sectionHead}>
+                <div>
+                  <h2 id="recs-locked-heading" className={styles.sectionTitle}>
+                    <span className={styles.sectionTitleIcon}>
+                      <Route size={16} aria-hidden />
+                    </span>
+                    Recommended next steps
+                  </h2>
+                  <p className={styles.sectionLead}>
+                    Personalised next steps and Smart Practice come with the Core, Plus and Ultra memberships.{" "}
+                    <Link href="/student/membership">See membership plans →</Link>
+                  </p>
+                </div>
+              </div>
+            </section>
+          )}
+
           {data.recommendations.length > 0 && (
             <section className={styles.section} aria-labelledby="recs-heading">
               <div className={styles.sectionHead}>

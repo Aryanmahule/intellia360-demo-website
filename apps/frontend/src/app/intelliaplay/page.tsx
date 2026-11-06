@@ -13,37 +13,37 @@ export const metadata: Metadata = {
 // Every mode below is a feature of the student portal today.
 const GAME_MODES = [
   {
-    icon: "🎯",
+    
     tint: "",
     title: "Daily Quiz",
     text: "A fresh set of questions every day. Play it to keep your streak going and pick up extra XP.",
   },
   {
-    icon: "🧩",
+    
     tint: "is-violet",
     title: "Practice Quizzes",
     text: "Short five-question sets for the topics in your grade. Your best score is kept, so there is always a record to beat.",
   },
   {
-    icon: "🗺️",
+    
     tint: "is-green",
     title: "Quest Map",
     text: "Your lessons laid out as a journey. Finish a topic to move along the path to the next challenge.",
   },
   {
-    icon: "🏅",
+    
     tint: "is-orange",
     title: "Achievements & Badges",
     text: "Unlock badges for milestones like finishing lessons, strong scores and long learning streaks.",
   },
   {
-    icon: "🏆",
+    
     tint: "is-pink",
     title: "Leaderboard",
     text: "See where your XP ranks — across every grade, or just your own.",
   },
   {
-    icon: "💎",
+    
     tint: "",
     title: "XP, Gems & Streaks",
     text: "Every activity you complete earns rewards, and learning a little each day builds your streak.",
@@ -71,8 +71,10 @@ export default function IntelliaPlayPage() {
       <SiteHeader />
 
       {/* HERO */}
-      <section className="site-hero" aria-labelledby="play-title">
-        <div className="site-container site-hero-grid">
+<section
+  className="site-hero intelliaplay-hero"
+  aria-labelledby="play-title"
+>        <div className="site-container site-hero-grid">
           <div>
             <span className="site-eyebrow">🎮 GAME-BASED MATH PRACTICE</span>
 
@@ -98,9 +100,9 @@ export default function IntelliaPlayPage() {
             </div>
 
             <ul className="site-hero-points" aria-label="Highlights">
-              <li>🔥 Daily streaks</li>
-              <li>⭐ XP &amp; levels</li>
-              <li>🏅 Unlockable badges</li>
+              <li> Daily streaks</li>
+              <li> XP &amp; levels</li>
+              <li> Unlockable badges</li>
             </ul>
           </div>
 
@@ -127,7 +129,7 @@ export default function IntelliaPlayPage() {
             </div>
 
             <div className="site-visual-chip is-top">
-              <span className="chip-icon is-orange">🔥</span>
+              <span className="chip-icon is-orange"></span>
               <span>
                 <strong>7-day streak</strong>
                 <small>Keep it going!</small>
@@ -162,9 +164,7 @@ export default function IntelliaPlayPage() {
                 <span className="site-step" aria-hidden="true">
                   {String(index + 1).padStart(2, "0")}
                 </span>
-                <div className="site-card-icon" aria-hidden="true">
-                  {["🎯", "🧠", "🚀"][index]}
-                </div>
+                
                 <h3>{step.title}</h3>
                 <p>{step.text}</p>
               </article>
@@ -187,9 +187,7 @@ export default function IntelliaPlayPage() {
           <div className="site-grid site-grid--3">
             {GAME_MODES.map((mode) => (
               <article className="site-card" key={mode.title}>
-                <div className={`site-card-icon ${mode.tint}`} aria-hidden="true">
-                  {mode.icon}
-                </div>
+                
                 <h3>{mode.title}</h3>
                 <p>{mode.text}</p>
               </article>
@@ -224,25 +222,46 @@ export default function IntelliaPlayPage() {
 
           <div className="site-grid site-grid--2">
             <article className="site-card">
-              <div className="site-card-icon is-orange" aria-hidden="true">🔥</div>
+              
               <h3>Streaks</h3>
               <p>Learning a little every day keeps the flame alive.</p>
             </article>
             <article className="site-card">
-              <div className="site-card-icon" aria-hidden="true">⭐</div>
+              
               <h3>XP</h3>
               <p>Earned for lessons, quizzes and challenges.</p>
             </article>
             <article className="site-card">
-              <div className="site-card-icon is-violet" aria-hidden="true">💎</div>
+              
               <h3>Gems</h3>
               <p>Collected alongside XP as rewards for learning.</p>
             </article>
             <article className="site-card">
-              <div className="site-card-icon is-green" aria-hidden="true">🏅</div>
+              
               <h3>Badges</h3>
               <p>Unlocked when students reach milestones.</p>
             </article>
+          </div>
+        </div>
+      </section>
+
+      {/* PRICING */}
+      <section className="site-section is-white" aria-labelledby="play-pricing-title">
+        <div className="site-container">
+          <div className="site-section-head">
+            <span className="site-kicker">Pricing</span>
+            <h2 id="play-pricing-title">
+              IntelliaPlay is a <span>separate add-on</span>
+            </h2>
+            <p>
+              The IntelliaPlay section of the student portal is sold on its own: add it to a free account or to any
+              membership, monthly or annually, for each child you choose.
+            </p>
+          </div>
+          <div className="site-hero-actions" style={{ justifyContent: "center" }}>
+            <Link href="/pricing#intelliaplay" className="site-btn site-btn--primary">
+              See IntelliaPlay pricing →
+            </Link>
           </div>
         </div>
       </section>

@@ -300,7 +300,11 @@ export default function LessonEditorPage() {
                           value={mod.url}
                           aria-invalid={!!error}
                           aria-describedby={`${inputId}-hint`}
-                          onChange={(e) => updateModule(key, { url: e.target.value })}
+                          // Pasting a link into an empty module means it should be used.
+                          onChange={(e) => updateModule(key, {
+                            url: e.target.value,
+                            enabled: mod.enabled || (!mod.url && !!e.target.value.trim()),
+                          })}
                         />
                         <label className="ed-check-label" style={{ flexShrink: 0 }}>
                           <input

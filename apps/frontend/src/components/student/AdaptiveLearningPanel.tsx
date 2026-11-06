@@ -260,7 +260,15 @@ export default function AdaptiveLearningPanel() {
           <div className={styles.grid}>
             <div className={styles.column}>
               <h3 className={styles.sectionTitle}>Recommended for you</h3>
-              {data.recommendations.length === 0 ? (
+              {data.recommendationsLocked ? (
+                <p className={styles.muted}>
+                  Personalised recommendations and Smart Practice come with the Core, Plus and Ultra
+                  memberships.{" "}
+                  <Link href="/student/membership" className={styles.linkButton}>
+                    See plans →
+                  </Link>
+                </p>
+              ) : data.recommendations.length === 0 ? (
                 <p className={styles.muted}>
                   You&apos;re all caught up. Keep practising to keep your topics fresh.
                 </p>

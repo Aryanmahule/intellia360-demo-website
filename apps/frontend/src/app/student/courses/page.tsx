@@ -1,7 +1,18 @@
 "use client";
 
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import Link from "next/link";
+import {
+  Calculator,
+  Map,
+  Orbit,
+  Puzzle,
+  Rocket,
+  Search,
+  Shapes,
+  Star,
+  Telescope,
+} from "lucide-react";
 import { useStudentContext } from "@/context/StudentContext";
 import "./courses.css";
 interface CourseTopic {
@@ -32,7 +43,19 @@ interface CourseData {
   total: number;
   progress: number;
   firstTopicId?: string;
+  status: "not-started" | "in-progress" | "completed";
 }
+
+type CourseFilter = "all" | CourseData["status"];
+
+const courseFilters: { value: CourseFilter; label: string }[] = [
+  { value: "all", label: "All chapters" },
+  { value: "in-progress", label: "In progress" },
+  { value: "not-started", label: "Not started" },
+  { value: "completed", label: "Completed" },
+];
+
+const courseIcons = [Calculator, Rocket, Puzzle, Shapes, Star, Telescope];
 
 
 function BookIcon() {
@@ -172,7 +195,11 @@ export default function StudentCoursesPage() {
     learningGems,
     streakDays,
     activeLessonData,
+    studentName,
+    unlockedBadges,
   } = useStudentContext();
+  const [searchTerm, setSearchTerm] = useState("");
+  const [courseFilter, setCourseFilter] = useState<CourseFilter>("all");
 
   const typedCurriculum =
     curriculum as CourseCurriculum | null;
@@ -211,6 +238,12 @@ export default function StudentCoursesPage() {
               )
               : 0,
           firstTopicId: topics[0]?.id,
+          status:
+            total > 0 && completed === total
+              ? "completed"
+              : completed > 0
+                ? "in-progress"
+                : "not-started",
         };
       }
     );
@@ -244,6 +277,25 @@ export default function StudentCoursesPage() {
       (course) => course.firstTopicId
     )?.firstTopicId;
 
+  const filteredCourses = useMemo(() => {
+    const query = searchTerm.trim().toLocaleLowerCase();
+    return courses.filter((course) => {
+      const matchesFilter =
+        courseFilter === "all" || course.status === courseFilter;
+      const matchesSearch =
+        !query ||
+        course.title.toLocaleLowerCase().includes(query) ||
+        course.topics.some((topic) =>
+          topic.title.toLocaleLowerCase().includes(query)
+        );
+      return matchesFilter && matchesSearch;
+    });
+  }, [courses, courseFilter, searchTerm]);
+
+  const firstName = studentName?.trim().split(/\s+/)[0];
+  const welcomeName =
+    firstName && firstName !== "Student" ? firstName : "Learner";
+
   if (!typedCurriculum) {
     return (
       <main className="courses-page courses-page-gamified">
@@ -269,15 +321,23 @@ export default function StudentCoursesPage() {
         <header className="courses-header">
           <div>
             <span className="courses-eyebrow">
-              YOUR LEARNING JOURNEY
+              YOUR LEARNING ADVENTURE
             </span>
 
-            <h1 className="courses-page-title">Courses</h1>
+            <h1 className="courses-page-title">
+              Ready for your next quest, {welcomeName}?
+            </h1>
 
             <p>
-              Explore your curriculum, complete
-              quests and level up your knowledge.
+              Every lesson is a chance to discover something amazing.
             </p>
+          </div>
+
+          <div className="courses-hero-art" aria-hidden="true">
+            <span className="hero-planet"><Orbit size={27} strokeWidth={1.7} /></span>
+            <span className="hero-rocket"><Rocket size={34} strokeWidth={1.7} /></span>
+            <span className="hero-sparkle">✦</span>
+            <span className="hero-star">✧</span>
           </div>
 
           <div className="courses-header-actions">
@@ -328,13 +388,11 @@ export default function StudentCoursesPage() {
               </span>
 
               <h2>
-                Your Learning Journey
+                Your learning map
               </h2>
 
               <p>
-                {completedTotal} of{" "}
-                {totalLessons} lessons
-                completed
+                {completedTotal} of {totalLessons} lessons completed
               </p>
 
               <div className="overall-progress">
@@ -359,21 +417,28 @@ export default function StudentCoursesPage() {
               <strong>
                 {courses.length}
               </strong>
-              <span>Chapters</span>
+              <span>Chapters to explore</span>
             </div>
 
             <div className="overview-stat">
               <strong>
-                {completedTotal}
+                {streakDays ?? 0}
               </strong>
-              <span>Completed</span>
+              <span>Day streak</span>
             </div>
 
             <div className="overview-stat">
               <strong>
                 {learningGems ?? 0}
               </strong>
-              <span>Gems</span>
+              <span>Gems collected</span>
+            </div>
+
+            <div className="overview-stat">
+              <strong>
+                {unlockedBadges.length}
+              </strong>
+              <span>Badges earned</span>
             </div>
           </div>
         </section>
@@ -391,7 +456,7 @@ export default function StudentCoursesPage() {
 
               <div>
                 <span className="continue-label">
-                  CONTINUE YOUR QUEST
+                  YOUR NEXT ADVENTURE
                 </span>
 
                 <h3>
@@ -400,9 +465,7 @@ export default function StudentCoursesPage() {
                 </h3>
 
                 <p>
-                  Pick up where you left off
-                  and keep your learning streak
-                  alive.
+                  Pick up where you left off and keep your streak growing.
                 </p>
               </div>
             </div>
@@ -413,7 +476,7 @@ export default function StudentCoursesPage() {
               )}`}
               className="continue-button"
             >
-              Continue
+              Continue learning
               <ArrowIcon />
             </Link>
           </section>
@@ -428,22 +491,48 @@ export default function StudentCoursesPage() {
           <div className="section-heading">
             <div>
               <span className="section-eyebrow">
-                CURRICULUM
+                YOUR CURRICULUM
               </span>
 
-              <h2 className="courses-section-title">Choose Your Quest</h2>
+              <h2 className="courses-section-title">Choose your next quest</h2>
             </div>
 
             <span className="course-count">
-              {courses.length}{" "}
-              {courses.length === 1
-                ? "Chapter"
-                : "Chapters"}
+              {filteredCourses.length} of {courses.length} chapters
             </span>
           </div>
 
+          <div className="course-discovery-controls">
+            <label className="course-search">
+              <span aria-hidden="true">⌕</span>
+              <input
+                type="search"
+                value={searchTerm}
+                onChange={(event) => setSearchTerm(event.target.value)}
+                placeholder="Search chapters or lessons"
+                aria-label="Search chapters and lessons"
+              />
+            </label>
+            <div className="course-filters" role="group" aria-label="Filter chapters by progress">
+              {courseFilters.map((filter) => (
+                <button
+                  key={filter.value}
+                  type="button"
+                  className={courseFilter === filter.value ? "active" : ""}
+                  aria-pressed={courseFilter === filter.value}
+                  onClick={() => setCourseFilter(filter.value)}
+                >
+                  {filter.label}
+                  {filter.value === "all" && (
+                    <span>{courses.length}</span>
+                  )}
+                </button>
+              ))}
+            </div>
+          </div>
+
           <div className="course-grid">
-            {courses.map(
+            {filteredCourses.map(
               (course, index) => {
 
                 const actionTopic =
@@ -455,39 +544,47 @@ export default function StudentCoursesPage() {
                       topic.status !==
                       "locked"
                   ) ||
-                  course.topics[0];
+                  course.topics.find((topic) => topic.status !== "locked");
 
                 const isCompleted =
                   course.total > 0 &&
                   course.completed ===
                   course.total;
+                const statusLabel = isCompleted
+                  ? "Mastered"
+                  : course.completed > 0
+                      ? "In progress"
+                      : "Ready to explore";
+                const CourseIcon = courseIcons[index % courseIcons.length];
 
                 return (
                   <article
-                    key={course.id}
-                    className={`course-card ${isCompleted
-                      ? "course-complete"
-                      : ""
-                      }`}
+                      key={course.id}
+                      className={`course-card course-card-theme-${index % courseIcons.length} ${isCompleted ? "course-complete" : ""}`}
                   >
-                    {/* 3D CARD TOP */}
-                    <div className="course-card-visual">
+                      {/* 3D CARD TOP */}
+                      <div className="course-card-visual">
 
-                      <div className="course-orbit orbit-one" />
-                      <div className="course-orbit orbit-two" />
+                        <div className="course-orbit orbit-one" aria-hidden="true" />
+                        <div className="course-orbit orbit-two" aria-hidden="true" />
 
-                      <div className="course-cube">
-                        {String(course.chapterNumber).padStart(2, "0")}
-                      </div>
+                        <div className="course-cube" aria-hidden="true">
+                          <CourseIcon size={40} strokeWidth={1.6} />
+                        </div>
 
-                      <span className="course-chapter-number course-chapter-number-large">
+                        <span className="course-chapter-number course-chapter-number-large">
                         CHAPTER{" "}
                         {course.chapterNumber}
                       </span>
 
                       {isCompleted && (
                         <span className="course-completed">
-                          COMPLETED
+                          ✦ MASTERED
+                        </span>
+                      )}
+                      {!isCompleted && course.completed > 0 && (
+                        <span className="course-in-progress-badge">
+                          IN PROGRESS
                         </span>
                       )}
                     </div>
@@ -500,18 +597,13 @@ export default function StudentCoursesPage() {
                           {course.title}
                         </h3>
 
-                        <span className="course-percentage">
-                          {course.progress}%
+                        <span className={`course-status-badge ${course.status}`}>
+                          {statusLabel}
                         </span>
                       </div>
 
                       <p className="course-description course-description-large">
-                        {course.total}{" "}
-                        {course.total === 1
-                          ? "lesson"
-                          : "lessons"}{" "}
-                        in this learning
-                        chapter.
+                        {course.total} {course.total === 1 ? "lesson" : "lessons"} to discover
                       </p>
 
                       {/* PROGRESS */}
@@ -519,13 +611,18 @@ export default function StudentCoursesPage() {
                         <div className="course-progress-track">
                           <div
                             className="course-progress-fill"
+                            role="progressbar"
+                            aria-label={`${course.title} progress`}
+                            aria-valuenow={course.progress}
+                            aria-valuemin={0}
+                            aria-valuemax={100}
                             style={{
                               width: `${course.progress}%`,
                             }}
                           />
                         </div>
 
-                        <span>
+                        <span aria-label={`${course.completed} of ${course.total} lessons completed`}>
                           {course.completed}/
                           {course.total}
                         </span>
@@ -592,11 +689,11 @@ export default function StudentCoursesPage() {
                         >
                           <span>
                             {isCompleted
-                              ? "Review Chapter"
+                              ? "Replay chapter"
                               : course.completed >
                                 0
-                                ? "Continue Quest"
-                                : "Start Quest"}
+                                ? "Continue quest"
+                                : "Start this quest"}
                           </span>
 
                           <ArrowIcon />
@@ -610,6 +707,30 @@ export default function StudentCoursesPage() {
                   </article>
                 );
               }
+            )}
+            {filteredCourses.length === 0 && (
+              <div className="course-empty-state">
+                <span aria-hidden="true">
+                  {courses.length ? <Search size={38} strokeWidth={1.6} /> : <Map size={38} strokeWidth={1.6} />}
+                </span>
+                <h3>{courses.length ? "No quests found" : "Your map is getting ready"}</h3>
+                <p>
+                  {courses.length
+                    ? "Try another search or choose a different progress filter."
+                    : "There are no chapters available in this curriculum yet."}
+                </p>
+                {(searchTerm || courseFilter !== "all") && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSearchTerm("");
+                      setCourseFilter("all");
+                    }}
+                  >
+                    Show all chapters
+                  </button>
+                )}
+              </div>
             )}
           </div>
         </section>

@@ -16,6 +16,7 @@ const SOURCE_TEXT: Record<MistakeToReview["source"], string> = {
   adaptive: "Smart practice",
   daily: "Daily quiz",
   practice: "Practice",
+  test: "Lesson test",
 };
 
 function MistakeCard({ mistake }: { mistake: MistakeToReview }) {

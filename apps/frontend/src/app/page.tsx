@@ -3,10 +3,17 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import Link from "next/link";
+import { Outfit } from "next/font/google";
 import SiteHeader from "@/components/common/SiteHeader";
 import SiteFooter from "@/components/common/SiteFooter";
 import "./home.css";
 import { apiFetch } from "@/lib/api";
+
+const heroDisplay = Outfit({
+  subsets: ["latin"],
+  variable: "--font-hero-display",
+  display: "swap",
+});
 
 type HomepageLeaderboardEntry = {
   // No userId: the public leaderboard does not expose account identifiers.
@@ -46,6 +53,15 @@ const features = [
     title: "AI Learning Buddy",
     text: "Get hints, explanations and personalized help whenever you need it.",
   },
+];
+
+const featureWorlds = [
+  { symbol: "✦", orbit: "↗", label: "Your own learning path" },
+  { symbol: "◆", orbit: "✧", label: "Rewards & achievements" },
+  { symbol: "▣", orbit: "✦", label: "Stories, puzzles & play" },
+  { symbol: "★", orbit: "＋", label: "Progress worth celebrating" },
+  { symbol: "✓", orbit: "✧", label: "A protected space to grow" },
+  { symbol: "AI", orbit: "•••", label: "A buddy whenever you need" },
 ];
 
 /* ============================================================
@@ -431,6 +447,7 @@ export default function HomePage() {
   const [leaderboardOpen, setLeaderboardOpen] = useState(false);
   const [leaderboardEntries, setLeaderboardEntries] = useState<HomepageLeaderboardEntry[]>([]);
   const [leaderboardLoading, setLeaderboardLoading] = useState(false);
+  const [selectedLearningWorld, setSelectedLearningWorld] = useState<number | null>(null);
 
   const fetchHomepageLeaderboard = useCallback(async () => {
     try {
@@ -514,10 +531,18 @@ export default function HomePage() {
               PLAY • LEARN • LEVEL UP
             </div>
 
-            <h1 id="home-hero-title">
-              Turn Learning Into
-              <br />
-              <span>an Adventure.</span>
+            <h1 id="home-hero-title" className={heroDisplay.variable}>
+              <span className="hero-understand-line">
+                Understand{" "}
+                <span className="hero-math-wrap">
+                  <span className="hero-math-crown" aria-hidden="true">♛</span>
+                  <span className="hero-math-word">Math</span>
+                </span>
+              </span>
+              <span className="hero-unlock-line">
+                <span className="hero-unlock-word">Unlock</span>{" "}
+                <span className="hero-intelligence-word">Intelligence</span>
+              </span>
             </h1>
 
             <p className="hero-description">
@@ -635,125 +660,80 @@ export default function HomePage() {
           FEATURES
       ====================================================== */}
 
-      {/* ======================================================
-    WHY INTELLIA360
-====================================================== */}
-
-      {/* ======================================================
-    WHY INTELLIA360 — COMPACT PRODUCT VISUALS
-    Keep the existing section background/layout.
-====================================================== */}
-      <section className="features-section" id="learning">
+      <section className="features-section learning-universe-section" id="learning">
         <div className="home-container">
-
-          <div className="section-heading">
+          <div className="section-heading learning-universe-heading">
             <span className="section-eyebrow">WHY INTELLIA360?</span>
-
             <h2>
               Learning That Feels Like
               <span> an Adventure</span>
             </h2>
-
             <p>
               Everything students need to learn, practice, play and grow.
             </p>
           </div>
 
-          <div className="features-grid features-grid-product">
-
-            {features.map((feature, index) => (
-              <article
-                className={`feature-item feature-product-card feature-product-${index + 1}`}
-                key={feature.title}
-              >
-                {/* Small CSS-built product visual — no external image/AI asset */}
-                <div className="feature-product-visual" aria-hidden="true">
-                  {index === 0 && (
-                    <div className="feature-visual-path">
-                      <span className="path-node path-node-main" />
-                      <span className="path-line path-line-one" />
-                      <span className="path-node path-node-two" />
-                      <span className="path-line path-line-two" />
-                      <span className="path-node path-node-three" />
-                      <span className="path-target" />
-                    </div>
-                  )}
-
-                  {index === 1 && (
-                    <div className="feature-visual-xp">
-                      <span className="xp-level">LEVEL 07</span>
-                      <strong>+240 XP</strong>
-                      <span className="xp-track">
-                        <span />
-                      </span>
-                      <small>Challenge complete</small>
-                    </div>
-                  )}
-
-                  {index === 2 && (
-                    <div className="feature-visual-lesson">
-                      <span className="lesson-window-top">
-                        <i /><i /><i />
-                      </span>
-                      <span className="lesson-play">›</span>
-                      <span className="lesson-line lesson-line-one" />
-                      <span className="lesson-line lesson-line-two" />
-                    </div>
-                  )}
-
-                  {index === 3 && (
-                    <div className="feature-visual-level">
-                      <span className="level-ring">
-                        <b>08</b>
-                      </span>
-                      <span className="level-copy">
-                        <small>NEXT LEVEL</small>
-                        <strong>1,240 XP</strong>
-                      </span>
-                    </div>
-                  )}
-
-                  {index === 4 && (
-                    <div className="feature-visual-security">
-                      <span className="security-shield">
-                        <b />
-                      </span>
-                      <span className="security-status">
-                        <strong>Protected</strong>
-                        <small>Learning data</small>
-                      </span>
-                    </div>
-                  )}
-
-                  {index === 5 && (
-                    <div className="feature-visual-ai">
-                      <span className="ai-orbit ai-orbit-one" />
-                      <span className="ai-orbit ai-orbit-two" />
-                      <span className="ai-core">AI</span>
-                      <span className="ai-message ai-message-one">Hint</span>
-                      <span className="ai-message ai-message-two">Explain</span>
-                    </div>
-                  )}
-                </div>
-
-                <div className="feature-content">
-                  <span className="feature-product-number">
-                    {String(index + 1).padStart(2, "0")}
-                  </span>
-
-                  <h3>{feature.title}</h3>
-                  <p>{feature.text}</p>
-                </div>
-
-                <span className="feature-product-arrow" aria-hidden="true">↗</span>
-              </article>
-            ))}
-
+          <div className="learning-universe-scene">
+            <span className="universe-star universe-star-one" aria-hidden="true">✦</span>
+            <span className="universe-star universe-star-two" aria-hidden="true">✧</span>
+            <span className="universe-star universe-star-three" aria-hidden="true">✦</span>
+            <span className="universe-planet universe-planet-one" aria-hidden="true" />
+            <span className="universe-planet universe-planet-two" aria-hidden="true" />
+            <span className="universe-orbit universe-orbit-one" aria-hidden="true" />
+            <span className="universe-orbit universe-orbit-two" aria-hidden="true" />
+            <span className="universe-float universe-float-book" aria-hidden="true">▤</span>
+            <span className="universe-float universe-float-spark" aria-hidden="true">＋</span>
+            <span className="universe-xp-badge" aria-hidden="true">+ XP ✨</span>
+            <div className="universe-mascot">
+              <span className="universe-mascot-glow" aria-hidden="true" />
+              <img
+                src="/assets/images/intellia360-mascot.png"
+                alt="Your friendly Intellia360 learning buddy"
+                loading="lazy"
+              />
+            </div>
+            <div className="universe-scene-caption">
+              <span className="universe-caption-dot" aria-hidden="true" />
+              <span>Your learning universe</span>
+            </div>
           </div>
-        </div>
 
-        <div className="feature-plane feature-plane-left" aria-hidden="true">➤</div>
-        <div className="feature-plane feature-plane-right" aria-hidden="true">➤</div>
+          <p className="learning-universe-prompt">Pick a world and let the adventure begin</p>
+
+          <div className="learning-worlds-grid" aria-label="Explore learning worlds">
+            {features.map((feature, index) => {
+              const world = featureWorlds[index];
+              const isSelected = selectedLearningWorld === index;
+
+              return (
+                <button
+                  className={`learning-world learning-world-${index + 1}${isSelected ? " is-selected" : ""}`}
+                  type="button"
+                  key={feature.title}
+                  aria-pressed={isSelected}
+                  onClick={() => setSelectedLearningWorld(index)}
+                >
+                  <span className="learning-world-art" aria-hidden="true">
+                    <span className="learning-world-orbit">{world.orbit}</span>
+                    <span className="learning-world-symbol">{world.symbol}</span>
+                    <span className="learning-world-spark">✦</span>
+                  </span>
+                  <span className="learning-world-copy">
+                    <span className="learning-world-label">{world.label}</span>
+                    <span className="learning-world-title">{feature.title}</span>
+                    <span className="learning-world-description">{feature.text}</span>
+                  </span>
+                  <span className="learning-world-arrow" aria-hidden="true">↗</span>
+                </button>
+              );
+            })}
+          </div>
+          {selectedLearningWorld !== null && (
+            <p className="learning-world-feedback" role="status" aria-live="polite">
+              <span aria-hidden="true">✨</span> {features[selectedLearningWorld].title} world selected
+            </p>
+          )}
+        </div>
       </section>
 
       {/* ======================================================

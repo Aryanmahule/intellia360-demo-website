@@ -1,4 +1,5 @@
 import { apiFetch } from "@/lib/api";
+import { formatMoney } from "@intellia360/shared/billing/currencies";
 /* ============================================================
    ADMIN TABLE DATA
    Backed by real DB-backed Admin APIs.
@@ -86,6 +87,8 @@ interface ApiCourse {
 interface ApiPayment {
   id: string; transactionId: string; payerName: string; schoolOrUser: string | null;
   amount: number; date: string; method: string; status: string;
+  // Razorpay payments only (src/lib/billing on the API); absent on manual invoices.
+  currency?: string | null; amountMinor?: number | null; kind?: string | null; refundOf?: string | null;
 }
 
 /* ============================================================
@@ -297,27 +300,51 @@ export interface PaymentRow {
   transactionId: string;
   payerName: string;
   schoolOrUser: string;
+  /** Whole rupees (the INR equivalent for foreign-currency payments) — what revenue KPIs add up. */
   amount: string;
+  /** What was actually charged, in its own currency: "₹1,799.00", "$47.99". */
+  amountLabel: string;
+  /** INR equivalent shown under a foreign-currency amount, or null. */
+  inrLabel: string | null;
   date: string;
   method: string;
   status: "Completed" | "Pending" | "Refunded";
+  /** A Razorpay payment that can still be refunded from here. */
+  refundable: boolean;
 }
 
 export async function fetchPayments(): Promise<PaymentRow[]> {
   const rows = await getRows<ApiPayment>("/api/admin/payments", "load payments");
-  return rows.map((p) => ({
-    id: p.id,
-    transactionId: p.transactionId,
-    payerName: p.payerName,
-    schoolOrUser: p.schoolOrUser ?? "—",
-    amount: String(p.amount),
-    date: new Date(p.date).toLocaleDateString(),
-    method: p.method,
-    status: (p.status === "COMPLETED" ? "Completed" : p.status === "REFUNDED" ? "Refunded" : "Pending") as
+  const refunded = new Set(rows.map((p) => p.refundOf).filter(Boolean));
+  return rows.map((p) => {
+    const foreign = !!p.currency && p.currency !== "INR" && typeof p.amountMinor === "number";
+    const status = (p.status === "COMPLETED" ? "Completed" : p.status === "REFUNDED" ? "Refunded" : "Pending") as
       | "Completed"
       | "Pending"
-      | "Refunded",
-  }));
+      | "Refunded";
+    return {
+      id: p.id,
+      transactionId: p.transactionId,
+      payerName: p.payerName,
+      schoolOrUser: p.schoolOrUser ?? "—",
+      amount: String(p.amount),
+      amountLabel:
+        p.currency && typeof p.amountMinor === "number"
+          ? formatMoney(p.amountMinor, p.currency, "en-IN", { keepDecimals: true })
+          : `₹${Number(p.amount || 0).toLocaleString("en-IN")}`,
+      inrLabel: foreign ? (p.amount > 0 ? `≈ ₹${p.amount.toLocaleString("en-IN")}` : "INR amount pending") : null,
+      date: new Date(p.date).toLocaleDateString(),
+      method: p.method,
+      status,
+      refundable:
+        status === "Completed" && p.transactionId.startsWith("pay_") && p.kind !== "REFUND" && !refunded.has(p.id),
+    };
+  });
+}
+
+/** Refund a Razorpay payment in full and end the access it bought. */
+export async function refundPayment(id: string): Promise<{ success: boolean; message: string }> {
+  return sendMutation(`/api/admin/payments/${encodeURIComponent(id)}/refund`, { method: "POST" }, "Refund failed.");
 }
 
 export async function createPayment(input: {

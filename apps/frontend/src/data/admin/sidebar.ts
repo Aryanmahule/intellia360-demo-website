@@ -93,6 +93,18 @@ export const sidebarSections: MenuSection[] = [
         path: "/admin/payments",
       },
       {
+        id: "memberships",
+        label: "Memberships",
+        icon: "Crown",
+        path: "/admin/memberships",
+      },
+      {
+        id: "pricing",
+        label: "Pricing",
+        icon: "IndianRupee",
+        path: "/admin/pricing",
+      },
+      {
         id: "reports",
         label: "Reports",
         icon: "FileText",

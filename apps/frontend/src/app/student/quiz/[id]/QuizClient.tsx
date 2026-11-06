@@ -257,6 +257,8 @@ export default function StudentQuizPage() {
     useState<NonNullable<SubmitResponse["data"]> | null>(null);
 
   const [errorMessage, setErrorMessage] = useState("");
+  // Smart Practice is part of a paid membership: the API answers 402.
+  const [needsMembership, setNeedsMembership] = useState(false);
 
   const currentQuestion = quiz?.questions[currentQuestionIndex];
 
@@ -298,6 +300,12 @@ export default function StudentQuizPage() {
         },
         cache: "no-store",
       });
+
+      if (response.status === 402) {
+        const locked = (await response.json().catch(() => null)) as { message?: string } | null;
+        setNeedsMembership(true);
+        throw new Error(locked?.message ?? "This quiz is part of a paid membership.");
+      }
 
       if (!response.ok) {
         throw new Error("Unable to load quiz.");
@@ -515,17 +523,27 @@ export default function StudentQuizPage() {
             <CloseIcon />
           </div>
 
-          <h1>Quiz unavailable</h1>
+          <h1>{needsMembership ? "Unlock Smart Practice" : "Quiz unavailable"}</h1>
           <p>{errorMessage}</p>
 
           <div className="quiz-error-actions">
-            <button
-              type="button"
-              className="quiz-primary-button"
-              onClick={() => void loadQuiz()}
-            >
-              Try Again
-            </button>
+            {needsMembership ? (
+              <button
+                type="button"
+                className="quiz-primary-button"
+                onClick={() => router.push("/student/membership")}
+              >
+                See membership plans
+              </button>
+            ) : (
+              <button
+                type="button"
+                className="quiz-primary-button"
+                onClick={() => void loadQuiz()}
+              >
+                Try Again
+              </button>
+            )}
 
             <button
               type="button"

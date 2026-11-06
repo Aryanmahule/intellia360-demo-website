@@ -98,6 +98,11 @@ export interface AdaptiveOverview {
   strengths: { skill: string; label: string; score: number }[];
   needsWork: { skill: string; label: string; score: number }[];
   recommendations: Recommendation[];
+  /**
+   * True when the learner's membership does not include recommendations
+   * (Free, with billing switched on): `recommendations` is then empty.
+   */
+  recommendationsLocked?: boolean;
   policy: { bands: MasteryBandPolicy[]; minEvidence: number };
 }
 
@@ -111,11 +116,12 @@ export interface RecommendationsResponse {
   grade: string;
   status: AdaptiveOverview["status"];
   recommendations: Recommendation[];
+  recommendationsLocked?: boolean;
 }
 
 /* ── Progress (GET /api/student/adaptive-learning/progress) ───────────────── */
 
-export type EvidenceSourceLabel = "adaptive" | "practice" | "daily";
+export type EvidenceSourceLabel = "adaptive" | "practice" | "daily" | "test";
 
 /** Overall mastery at the end of one UTC day. */
 export interface MasteryHistoryPoint {
@@ -145,7 +151,7 @@ export interface SkillProgress {
   difficultyLevel: number;
 }
 
-export type QuizHistoryKind = "placement" | "smart" | "topic" | "practice" | "daily";
+export type QuizHistoryKind = "placement" | "smart" | "topic" | "practice" | "daily" | "test";
 
 export interface QuizHistoryItem {
   id: string;
@@ -161,8 +167,8 @@ export interface QuizHistoryItem {
 
 /**
  * A question answered wrongly and not answered correctly since. Only from
- * adaptive and daily quizzes, which already showed the answer at submission;
- * practice quizzes keep their answers hidden.
+ * adaptive quizzes, lesson tests and the daily quiz, which already showed the
+ * answer at submission; practice quizzes keep their answers hidden.
  */
 export interface MistakeToReview {
   questionId: string;
@@ -229,7 +235,7 @@ export interface QuizAdaptation {
 export interface QuizReviewItem {
   questionId: string;
   isCorrect: boolean;
-  /** Adaptive quizzes only. */
+  /** Adaptive quizzes and lesson tests only. */
   correctOptionId?: string;
   explanation?: string;
 }
@@ -247,7 +253,7 @@ export interface QuizSubmitResult {
   quizId: string;
   lessonId: string;
   sessionId: string | null;
-  mode: "practice" | "adaptive";
+  mode: "practice" | "adaptive" | "test";
   scorePercent: number;
   correctAnswers: number;
   totalQuestions: number;

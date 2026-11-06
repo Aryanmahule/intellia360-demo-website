@@ -2,6 +2,7 @@
 
 import {
   Suspense,
+  useRef,
   useEffect,
   useState,
 } from "react";
@@ -13,6 +14,7 @@ import { useStudent } from "@/context/StudentContext";
 import LessonResourceNav, {
   type LessonResourceKey,
 } from "@/components/student/LessonResourceNav";
+import LessonTest from "@/components/student/LessonTest";
 import type {
   LessonVideoResources,
   StudentLessonResources,
@@ -26,13 +28,13 @@ import { apiFetch, apiUrl } from "@/lib/api";
  * LESSON SCREEN
  * ============================================================
  *
- * The parent shell for every lesson module. Architecture, Videos and
- * EduNotes are switched with ?module= and rendered here from the lesson's
+ * The parent shell for every lesson module. Architecture, Videos, EduNotes
+ * and the Test are switched with ?module= and rendered here from the lesson's
  * own data (/api/student/lesson-resources), so no student route is ever
  * framed inside another.
  */
 
-const LESSON_MODULES: LessonResourceKey[] = ["lesson", "video", "edunotes"];
+const LESSON_MODULES: LessonResourceKey[] = ["lesson", "video", "edunotes", "test"];
 
 /*
  * react-pdf uses browser APIs such as DOMMatrix.
@@ -178,7 +180,6 @@ const lessonCardStyle = {
     "0 10px 40px rgba(37, 99, 235, 0.08)",
   overflow: "hidden",
 } as const;
-
 
 /*
  * ============================================================
@@ -398,6 +399,7 @@ function StudentLessonContent() {
   const params = useRouteParams<"id">("/student/lesson/:id");
   const searchParams = useSearchParams();
   const { currentGrade, gradeReady } = useStudent();
+  const lessonViewerRef = useRef<HTMLDivElement>(null);
 
   const lessonId = Array.isArray(params.id)
     ? params.id[0]
@@ -420,6 +422,9 @@ function StudentLessonContent() {
   const [hasError, setHasError] =
     useState(false);
 
+  const [isFullscreen, setIsFullscreen] =
+    useState(false);
+
   const [reloadKey, setReloadKey] =
     useState(0);
 
@@ -429,6 +434,48 @@ function StudentLessonContent() {
   } | null>(null);
 
   const requestKey = `${grade}:${lessonId ?? ""}:${reloadKey}`;
+
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(
+        document.fullscreenElement === lessonViewerRef.current
+      );
+    };
+    const handleFullscreenEscape = (event: KeyboardEvent) => {
+      if (
+        event.key !== "Escape" ||
+        document.fullscreenElement !== lessonViewerRef.current
+      ) {
+        return;
+      }
+
+      void document.exitFullscreen().catch((error: unknown) => {
+        console.error("[Lesson fullscreen] Unable to exit fullscreen mode:", error);
+      });
+    };
+
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+    document.addEventListener("keydown", handleFullscreenEscape);
+    return () => {
+      document.removeEventListener("fullscreenchange", handleFullscreenChange);
+      document.removeEventListener("keydown", handleFullscreenEscape);
+    };
+  }, []);
+
+  const toggleLessonFullscreen = async () => {
+    const viewer = lessonViewerRef.current;
+    if (!viewer) return;
+
+    try {
+      if (document.fullscreenElement === viewer) {
+        await document.exitFullscreen();
+      } else {
+        await viewer.requestFullscreen();
+      }
+    } catch (error) {
+      console.error("[Lesson fullscreen] Unable to change fullscreen mode:", error);
+    }
+  };
 
 
   /*
@@ -619,59 +666,20 @@ function StudentLessonContent() {
    */
 
   return (
-    <main
-      style={{
-        minHeight: "100vh",
-        background: "#f5f7ff",
-      }}
-    >
-      <div
-        style={{
-          minHeight: "100vh",
-          padding: "24px",
-        }}
-      >
-        <div
-          style={{
-            width: "100%",
-            maxWidth: "1500px",
-            margin: "0 auto",
-          }}
-        >
+    <main className="student-lesson-page">
+      <div className="student-lesson-page__content">
+        <div className="student-lesson-shell">
 
           {/* ==================================================
               LESSON HEADER
           ================================================== */}
 
-          <div
-            style={{
-              background: "#ffffff",
-              borderRadius: "24px",
-              padding: "28px 32px",
-              marginBottom: "20px",
-              boxShadow:
-                "0 10px 40px rgba(37, 99, 235, 0.08)",
-            }}
-          >
-            <h1
-              style={{
-                fontSize: "32px",
-                fontWeight: 800,
-                color: "#172554",
-                margin: 0,
-                marginBottom: "8px",
-              }}
-            >
+          <div className="student-lesson-header">
+            <h1 className="student-lesson-title">
               Lesson Player
             </h1>
 
-            <p
-              style={{
-                fontSize: "16px",
-                color: "#64748b",
-                margin: 0,
-              }}
-            >
+            <p className="student-lesson-subtitle">
               Current Lesson:{" "}
               <strong
                 style={{
@@ -705,27 +713,41 @@ function StudentLessonContent() {
           ================================================== */}
 
           {resources && activeModule === "lesson" && architectureUrl && (
-            <div style={lessonCardStyle}>
+            <div
+              ref={lessonViewerRef}
+              className="lesson-architecture-viewer"
+            >
+              <div className="lesson-architecture-toolbar">
+                <span className="lesson-architecture-toolbar-title">
+                  Interactive Lesson
+                </span>
+                <button
+                  type="button"
+                  className="lesson-architecture-fullscreen"
+                  onClick={toggleLessonFullscreen}
+                  aria-pressed={isFullscreen}
+                  aria-label={
+                    isFullscreen
+                      ? "Exit full screen lesson"
+                      : "View lesson full screen"
+                  }
+                  title={
+                    isFullscreen
+                      ? "Exit full screen"
+                      : "Full screen"
+                  }
+                >
+                  <span aria-hidden="true">{isFullscreen ? "⊠" : "⛶"}</span>
+                  {isFullscreen ? "Exit Full Screen" : "Full Screen"}
+                </button>
+              </div>
 
               {/* ------------------------------------------------
                   LOADING SCREEN
               ------------------------------------------------ */}
 
               {isLoading && (
-                <div
-                  style={{
-                    position: "absolute",
-                    inset: 0,
-                    zIndex: 10,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    flexDirection: "column",
-                    background:
-                      "linear-gradient(135deg, #eef2ff, #f8faff)",
-                    borderRadius: "20px",
-                  }}
-                >
+                <div className="lesson-architecture-loading">
                   <div
                     style={{
                       fontSize: "64px",
@@ -735,23 +757,11 @@ function StudentLessonContent() {
                     🚀
                   </div>
 
-                  <h2
-                    style={{
-                      fontSize: "28px",
-                      fontWeight: 800,
-                      color: "#172554",
-                      marginBottom: "8px",
-                    }}
-                  >
+                  <h2 className="lesson-architecture-loading-title">
                     Preparing Your Lesson...
                   </h2>
 
-                  <p
-                    style={{
-                      color: "#64748b",
-                      fontSize: "16px",
-                    }}
-                  >
+                  <p className="lesson-architecture-loading-copy">
                     Get ready for your learning
                     adventure! ✨
                   </p>
@@ -780,6 +790,7 @@ function StudentLessonContent() {
               {!hasError && (
                 <iframe
                   key={architectureUrl}
+                  className="lesson-architecture-frame"
                   src={architectureUrl}
                   title={`${lessonId} Lesson Architecture`}
                   onLoad={() => {
@@ -789,15 +800,6 @@ function StudentLessonContent() {
                     setIsLoading(false);
                     setHasError(true);
                   }}
-                  style={{
-                    width: "100%",
-                    height: "calc(100vh - 180px)",
-                    minHeight: "750px",
-                    border: "none",
-                    borderRadius: "20px",
-                    display: "block",
-                    background: "#ffffff",
-                  }}
                   allow="
                     fullscreen;
                     autoplay;
@@ -806,6 +808,7 @@ function StudentLessonContent() {
                     picture-in-picture;
                   "
                   allowFullScreen
+                  scrolling="auto"
                   referrerPolicy="strict-origin-when-cross-origin"
                 />
               )}
@@ -838,6 +841,27 @@ function StudentLessonContent() {
               lessonId={lessonId}
               grade={grade}
               available={resources.eduNotes.available}
+            />
+          )}
+
+
+          {/* ==================================================
+              TEST MODULE
+          ================================================== */}
+
+          {resources && activeModule === "test" && (
+            <LessonTest
+              key={requestKey}
+              lessonId={lessonId}
+              grade={grade}
+              lessonTitle={resources.title ?? lessonId}
+              // Older API builds have no test field.
+              test={resources.test ?? { available: false }}
+              revisit={{
+                lesson: Boolean(architectureUrl),
+                video: resources.video.videos.length > 0 || Boolean(resources.video.embedUrl),
+                eduNotes: resources.eduNotes.available,
+              }}
             />
           )}
 

@@ -1,3 +1,6 @@
+
+"use client";
+
 import React from "react";
 
 interface GradeSelectorProps {
@@ -9,23 +12,27 @@ export default function GradeSelector({
   currentGrade = "grade1",
   onChangeGrade,
 }: GradeSelectorProps) {
-  const grades = [
-    { id: "grade1", label: "Grade 1 Math" },
-    { id: "grade2", label: "Grade 2 Math" },
-    { id: "grade3", label: "Grade 3 Math" },
-    { id: "grade4", label: "Grade 4 Math" },
-    { id: "grade5", label: "Grade 5 Math" },
-    { id: "grade7", label: "Grade 7 Math" },
-    { id: "grade10", label: "Grade 10 Math" },
-  ];
-  
-  const currentLabel = grades.find(g => g.id === currentGrade)?.label || "Grade Math";
+
+  // All grades from Grade 1 to Grade 12
+  const grades = Array.from({ length: 12 }, (_, index) => ({
+    id: `grade${index + 1}`,
+    label: `Grade ${index + 1} Math`,
+  }));
+
+  // Display the currently selected grade
+  const currentLabel =
+    grades.find((grade) => grade.id === currentGrade)?.label ||
+    "Select Grade";
 
   return (
-    <div className="grade-selector" style={{ position: "relative" }}>
-      <select 
+    <div
+      className="grade-selector"
+      style={{ position: "relative" }}
+    >
+      <select
         value={currentGrade}
-        onChange={(e) => onChangeGrade && onChangeGrade(e.target.value)}
+        onChange={(e) => onChangeGrade?.(e.target.value)}
+        aria-label="Select your mathematics grade"
         style={{
           position: "absolute",
           top: 0,
@@ -33,15 +40,23 @@ export default function GradeSelector({
           width: "100%",
           height: "100%",
           opacity: 0,
-          cursor: "pointer"
+          cursor: "pointer",
         }}
       >
-        {grades.map((g) => (
-          <option key={g.id} value={g.id}>{g.label}</option>
+        {grades.map((grade) => (
+          <option key={grade.id} value={grade.id}>
+            {grade.label}
+          </option>
         ))}
       </select>
-      <span className="grade-text">{currentLabel}</span>
-      <span className="grade-arrow">▾</span>
+
+      <span className="grade-text">
+        {currentLabel}
+      </span>
+
+      <span className="grade-arrow">
+        ▾
+      </span>
     </div>
   );
 }

@@ -2,7 +2,7 @@
 
 /** Recent graded quizzes, each with the mastery change it caused. */
 
-import { ArrowDown, ArrowUp, CalendarCheck, Compass, Minus, PencilLine, Sparkles, Target } from "lucide-react";
+import { ArrowDown, ArrowUp, CalendarCheck, ClipboardCheck, Compass, Minus, PencilLine, Sparkles, Target } from "lucide-react";
 import type { QuizHistoryItem, QuizHistoryKind } from "@intellia360/shared/types/api/adaptive-learning";
 import { relativeTime } from "./format";
 import styles from "./AdaptiveDashboard.module.css";
@@ -13,6 +13,7 @@ const KIND: Record<QuizHistoryKind, { icon: typeof Sparkles; className: string; 
   topic: { icon: Target, className: styles.iconOrange, text: "Topic practice" },
   practice: { icon: PencilLine, className: styles.iconAmber, text: "Lesson practice" },
   daily: { icon: CalendarCheck, className: styles.iconGreen, text: "Daily quiz" },
+  test: { icon: ClipboardCheck, className: styles.iconRed, text: "Lesson test" },
 };
 
 function MasteryDelta({ change }: { change: QuizHistoryItem["mastery"][number] }) {
